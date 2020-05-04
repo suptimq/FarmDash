@@ -6,13 +6,25 @@
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Average Fat</p>
         </div>
-        <div class="card"></div>
+        <div class="card">
+          <BarPlotChart
+            class="chart"
+            :chart-data="barData"
+            :options="barOptions"
+          />
+        </div>
         <div class="card"></div>
         <div class="info">
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Average Protein</p>
         </div>
-        <div class="card"></div>
+        <div class="card">
+          <PiePlotChart
+            class="chart"
+            :chart-data="pieData"
+            :options="pieOptions"
+          />
+        </div>
         <div class="card"></div>
       </div>
       <div class="whole second-row">
@@ -20,7 +32,9 @@
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Profitability</p>
         </div>
-        <div class="card"></div>
+        <div class="card">
+          <LinePlotChart :chart-data="barData" :options="barOptions" />
+        </div>
       </div>
     </section>
 
@@ -30,12 +44,35 @@
 
 <script>
 import { mdbIcon } from "mdbvue";
+import charts from "@/services/charts.js";
+import BarPlotChart from "@/services/charts/BarPlotChart.js";
+import PiePlotChart from "@/services/charts/PiePlotChart.js";
+import LinePlotChart from "@/services/charts/LinePlotChart.js";
 
 export default {
   name: "Home",
   components: {
     mdbIcon,
+    BarPlotChart,
+    PiePlotChart,
+    LinePlotChart,
   },
+  data() {
+    return {
+      barData: Object,
+      barOptions: Object,
+      pieData: Object,
+      pieOptions: Object,
+      lineData: Object,
+      lineOptions: Object,
+    };
+  },
+  created() {
+    [this.barData, this.barOptions] = charts.fillBarData();
+    [this.pieData, this.pieOptions] = charts.fillPieData();
+    [this.lineData, this.lineOptions] = charts.fillBarData();
+  },
+  methods: {},
 };
 </script>
 
@@ -79,5 +116,11 @@ export default {
   background: white;
   border-radius: 12px;
   margin-bottom: 2em;
+}
+
+.chart {
+  height: 100%;
+  width: 80%;
+  margin: auto;
 }
 </style>
