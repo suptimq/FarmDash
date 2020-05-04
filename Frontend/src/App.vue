@@ -1,23 +1,14 @@
 <template>
   <div id="app">
-    <!-- <component :is="layout"></component> -->
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import SignLayout from "@/components/SignIn.vue";
-import DashLayout from "@/views/Dash.vue";
-
 export default {
   name: "app",
 
-  components: {
-    // eslint-disable-next-line vue/no-unused-components
-    SignLayout,
-    // eslint-disable-next-line vue/no-unused-components
-    DashLayout,
-  },
+  components: {},
 
   data() {
     return {};
