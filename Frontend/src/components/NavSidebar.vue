@@ -13,7 +13,7 @@
           </span>
         </router-link>
         <ul v-if="item.hasSubItem" class="sub-nav-items">
-          <li v-for="subItem in item.subItems" :key="subItem">
+          <li v-for="subItem in item.subItems" :key="subItem.id">
             {{ subItem.name }}
           </li>
         </ul>
@@ -50,7 +50,7 @@ export default {
           to: "/home",
           icon: "chalkboard",
           hasSubItem: true,
-          subItems: [{ id: 11, name: "PLACEHOLDER" }],
+          subItems: [{ id: "subnav1", name: "PLACEHOLDER" }],
         },
         { id: "nav2", name: "USER PROFILE", to: "/user", icon: "user" },
         { id: "nav3", name: "TABLE LIST", to: "/table", icon: "table" },
