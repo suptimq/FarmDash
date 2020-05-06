@@ -28,11 +28,13 @@ const routes = [
         path: "/home",
         name: "Home",
         component: Home,
+        props: true,
       },
       {
         path: "/home/:id",
         name: "HomeId",
         component: Home,
+        props: true,
       },
       {
         path: "/user",
