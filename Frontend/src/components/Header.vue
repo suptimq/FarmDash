@@ -86,12 +86,22 @@ export default {
   },
   methods: {
     async getIndividulInfo(id) {
-      var path = "https://localhost:5000";
-      console.log(path);
+      var path = "http://localhost:5000/cow";
+      const params = { ID: id };
+      var fatChartData;
+      var proteinChartData;
       try {
-        // const resp = await backend.fetchResource(path, id);
-        // console.log(resp);
+        const resp = await backend.fetchResource(path, params);
+        console.log(resp);
+        console.log(resp["fat_chart_data"]);
+        fatChartData = resp["fat_chart_data"];
+        proteinChartData = resp["protein_chart_data"];
         this.selected = id;
+
+        this.$router.push({
+          path: `/home/${id}`,
+          params: { fatData: fatChartData, proteinData: proteinChartData },
+        });
       } catch (error) {
         console.log(error);
       }

@@ -51,6 +51,10 @@ import LinePlotChart from "@/services/charts/LinePlotChart.js";
 
 export default {
   name: "Home",
+  props: {
+    fatData: Object,
+    proteinData: Object,
+  },
   components: {
     mdbIcon,
     BarPlotChart,
