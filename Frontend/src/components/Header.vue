@@ -1,21 +1,35 @@
 <template>
   <div>
     <header class="header">
-      <div class="search">
+      <div class="search pos">
         <p class="text">Overview</p>
         <div class="input">
-          <mdb-form-inline class="active-cyan-2 ">
-            <input
-              class="form-control mr-sm-2"
-              type="text"
-              placeholder="Search"
-              aria-label="Search"
-            />
-            <mdbIcon icon="search" />
-          </mdb-form-inline>
+          <mdb-dropdown>
+            <mdb-dropdown-toggle slot="toggle">
+              {{ displayID }}
+            </mdb-dropdown-toggle>
+            <mdb-dropdown-menu>
+              <mdb-dropdown-item
+                v-for="(cow, idx) in cows"
+                :key="cow.id"
+                :class="{ active: selected === cow.id }"
+              >
+                <router-link to="">
+                  <span :id="cow.id" @click="getIndividulInfo(cow.id)">
+                    {{ cow.name }}
+                  </span>
+                </router-link>
+
+                <div
+                  v-if="idx === cows.length - 2"
+                  class="dropdown-divider"
+                ></div>
+              </mdb-dropdown-item>
+            </mdb-dropdown-menu>
+          </mdb-dropdown>
         </div>
       </div>
-      <div class="status">
+      <div class="status pos">
         <p class="text">
           <mdb-icon icon="chalkboard" />
           Stats
@@ -34,12 +48,54 @@
 </template>
 
 <script>
-import { mdbIcon, mdbFormInline } from "mdbvue";
+import {
+  mdbIcon,
+  mdbDropdown,
+  mdbDropdownItem,
+  mdbDropdownMenu,
+  mdbDropdownToggle,
+} from "mdbvue";
+// eslint-disable-next-line no-unused-vars
+import backend from "@/services/backend.js";
 
 export default {
   components: {
     mdbIcon,
-    mdbFormInline,
+    mdbDropdown,
+    mdbDropdownItem,
+    mdbDropdownMenu,
+    mdbDropdownToggle,
+  },
+  data() {
+    return {
+      cows: [
+        { id: 1, name: "COW 1" },
+        { id: 2, name: "COW 2" },
+        { id: 3, name: "COW 3" },
+        { id: 1000, name: "HERDS" },
+      ],
+      selected: 1000,
+    };
+  },
+  computed: {
+    displayID: function() {
+      return this.selected === this.cows[this.cows.length - 1].id
+        ? "HERDS"
+        : "COW ID: " + this.selected;
+    },
+  },
+  methods: {
+    async getIndividulInfo(id) {
+      var path = "https://localhost:5000";
+      console.log(path);
+      try {
+        // const resp = await backend.fetchResource(path, id);
+        // console.log(resp);
+        this.selected = id;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 </script>
@@ -53,11 +109,14 @@ header {
   border-bottom: 1px solid #777;
 }
 
+.pos {
+  margin: 12px 0 0;
+  padding: 15px;
+}
+
 .search {
   display: flex;
   justify-content: space-between;
-  margin: 12px 0 0;
-  padding: 15px;
 }
 
 .search .text {
@@ -69,8 +128,6 @@ header {
 .status {
   display: flex;
   justify-content: space-between;
-  margin: 12px 0 0;
-  padding: 15px;
 }
 
 .status .text {
@@ -82,5 +139,17 @@ header {
 .active-cyan .fa,
 .active-cyan-2 .fa {
   color: #4dd0e1;
+}
+
+.dropdown-item.active {
+  background: lightgray;
+}
+
+a {
+  color: black;
+}
+
+.dropdown-divider {
+  border-top: 2px solid #e9ecef;
 }
 </style>

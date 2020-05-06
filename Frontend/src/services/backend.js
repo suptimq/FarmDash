@@ -25,9 +25,13 @@ $axios.interceptors.response.use(
 );
 
 export default {
-  fetchResource(url) {
+  fetchResource(url, params) {
     // console.log(url);
     // url defined here will be appended to the baseURL
-    return $axios.post(url).then((response) => response.data);
+    return $axios
+      .get(url, {
+        params: params,
+      })
+      .then((response) => response.data);
   },
 };
