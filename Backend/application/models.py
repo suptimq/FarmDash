@@ -35,10 +35,15 @@ class Records(db.Model):
     avg_fat = db.Column(db.Float, index=True, unique=False)
     avg_Protein = db.Column(db.Float, index=True, unique=False)
 
-    def __init__(self, item, userID):
+    def __init__(self, userID, time, animal_ID, group_ID, status, milk_yield, avg_fat, avg_protein):
         self.userID = userID
-        self.time = item["time"]
-        self.animal_ID = item["animal_ID"]
+        self.time = time
+        self.animal_ID = animal_ID
+        self.group_ID = group_ID
+        self.status = status
+        self.milk_yield = milk_yield
+        self.avg_fat = avg_fat
+        self.avg_Protein = avg_protein
 
     def __repr__(self):
-        return '<Data %r>' % self.id
+        return '<Data animal_ID:%r at %r>' % (self.animal_ID, self.time)
