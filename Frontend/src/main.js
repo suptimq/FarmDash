@@ -10,6 +10,9 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 Vue.config.productionTip = false;
 
 new Vue({
+  created() {
+    document.title = "FarmDash";
+  },
   router,
   store,
   render: (h) => h(App),

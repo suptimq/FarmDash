@@ -193,8 +193,7 @@ export default {
   methods: {
     async getHerdsData(id) {
       // var path = "http://localhost:5000/cow";
-      var path =
-        "http://flask-env-usingpython36.eba-zhya6xfu.us-east-1.elasticbeanstalk.com/cow";
+      var path = process.env.VUE_APP_AWSURL + "/cow";
       id = 26;
       const params = { ID: id };
       try {
