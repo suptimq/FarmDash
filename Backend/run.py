@@ -13,13 +13,13 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 @app.route('/cow', methods=['GET'])
-# @app.route('/cow', methods=['GET'])
 def get_data():
     # Bar chart data
     #   Dictionary: key-month, value-records within that month
     # print('Request cow id: {}'.format(cowID))
     print(request)
     cowID = request.args.get('ID')
+    year = request.args.get("Year")
     print(cowID)
 
     fat_chart_data = {'Jan': [random.randint(0, 100) for _ in range(31)], 'Feb': [
