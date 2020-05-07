@@ -192,8 +192,7 @@ export default {
   },
   methods: {
     async getHerdsData(id) {
-      // var path = "http://localhost:5000/cow";
-      var path = process.env.VUE_APP_AWSURL + "/cow";
+      var path = "/cow";
       id = 26;
       const params = { ID: id };
       try {
