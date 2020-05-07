@@ -72,6 +72,7 @@ import {
   mdbBtn,
   mdbModalFooter,
 } from "mdbvue";
+// import backend from "@/services/backend.js";
 
 export default {
   name: "SignInNew",
@@ -94,7 +95,9 @@ export default {
   },
   methods: {
     authenticate() {
-      this.$router.push({ name: "Home" });
+      // ID 1000 means herds
+      var id = 1000;
+      this.$router.push({ path: `/home/${id}` });
     },
   },
 };
