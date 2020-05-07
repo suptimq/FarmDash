@@ -22,11 +22,21 @@ def get_data():
     year = request.args.get("Year")
     print(cowID)
 
-    fat_chart_data = {'Jan': [random.randint(0, 100) for _ in range(31)], 'Feb': [
-        random.randint(0, 100) for _ in range(28)]}
+    fat_chart_data = {
+        str(year): {
+            str(month): [random.randint(0, 100) for _ in range(31)]
+            for month in range(1, 13)
+        }
+        for year in [2018, 2019]
+    }
 
-    protein_chart_data = {'Jan': [random.randint(0, 100) for _ in range(31)], 'Feb': [
-        random.randint(0, 100) for _ in range(28)]}
+    protein_chart_data = {
+        str(year): {
+            str(month): [random.randint(0, 100) for _ in range(31)]
+            for month in range(1, 13)
+        }
+        for year in [2018, 2019]
+    }
 
     response = {
         'status': 'sucess',
