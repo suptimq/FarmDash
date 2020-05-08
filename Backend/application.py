@@ -10,12 +10,14 @@ from flask import Flask, render_template, request, jsonify
 from application import db, application
 from application.models import Data, User
 from DBOperation import DBOperation
+from flask_cors import CORS
 # Elastic Beanstalk initalization
 # application = Flask(__name__)
 application.debug = True
 # change this to your own value
 # application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
-
+# enable CORS
+CORS(application, resources={r'/*': {'origins': '*'}})
 myOperation = DBOperation()
 @application.route('/', methods=['GET', 'POST'])
 @application.route('/index', methods=['GET', 'POST'])
@@ -60,18 +62,12 @@ def get_data():
     print(request)
     cowID = request.args.get('ID')
     print(cowID)
-    fat, protein = myOperation.calc_Monthly(cowID)
-
-    # fat_chart_data = {'Jan': [random.randint(0, 100) for _ in range(31)], 'Feb': [
-    #     random.randint(0, 100) for _ in range(28)]}
-    #
-    # protein_chart_data = {'Jan': [random.randint(0, 100) for _ in range(31)], 'Feb': [
-    #     random.randint(0, 100) for _ in range(28)]}
-
+    fat, protein, milkyield = myOperation.calc_Monthly(cowID)
     response = {
         'status': 'sucess',
         'fat_chart_data': fat,
         'protein_chart_data': protein,
+        'milkyield_chart_data': milkyield
     }
     return jsonify(response)
 

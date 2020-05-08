@@ -17,7 +17,6 @@ class DBOperation():
 
     def calc_Monthly(self, animal_ID):
         print("Aggregating fat and protein data")
-        records = Records.query.filter_by(animal_ID = animal_ID).all()
         fat = {}
         fat["2018"] = {}
         fat["2019"] = {}
@@ -25,13 +24,44 @@ class DBOperation():
             fat["2018"][str(i)] = []
             fat["2019"][str(i)] = []
         protein = copy.deepcopy(fat)
-        for i in range(len(records)):
-            record = records[i]
-            ymd = record.time.split("-")
-            fat[ymd[0]][ymd[1]].append(record.avg_fat)
-            protein[ymd[0]][ymd[1]].append(record.avg_Protein)
+        milkyield = copy.deepcopy(fat)
 
-        return fat, protein
+        if animal_ID == "all":
+            records = Records.query.all()
+            AVGFatRecords = {}
+            AVGProteinRecords = {}
+            AVGYieldRecords = {}
+            for i in range(len(records)):
+                record = records[i]
+                if record.time not in AVGFatRecords:
+                    AVGFatRecords[record.time] = [record.avg_fat]
+                    AVGProteinRecords[record.time] = [record.avg_Protein]
+                    AVGYieldRecords[record.time] = [record.milk_yield]
+                else:
+                    AVGFatRecords[record.time].append(record.avg_fat)
+                    AVGProteinRecords[record.time].append(record.avg_Protein)
+                    AVGYieldRecords[record.time].append(record.milk_yield)
+            for time in AVGFatRecords:
+                ymd = time.split("-")
+                AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
+                AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (len(AVGProteinRecords[time]) > 0) else sum(AVGProteinRecords[time])
+                AVGYield = sum(AVGYieldRecords[time]) / len(AVGYieldRecords[time]) if (len(AVGYieldRecords[time]) > 0) else sum(AVGYieldRecords[time])
+                fat[ymd[0]][ymd[1]].append(AVGFat)
+                protein[ymd[0]][ymd[1]].append(AVGProtein)
+                milkyield[ymd[0]][ymd[1]].append(AVGYield)
+
+        else:
+            records = Records.query.filter_by(animal_ID = animal_ID).all()
+            if len(records) != 0:
+                for i in range(len(records)):
+                    record = records[i]
+                    ymd = record.time.split("-")
+                    # first aggregate to one date "2018-3-1" then decomposite by month and date
+
+                    fat[ymd[0]][ymd[1]].append(record.avg_fat)
+                    protein[ymd[0]][ymd[1]].append(record.avg_Protein)
+                    milkyield[ymd[0]][ymd[1]].append(record.milk_yield)
+        return fat, protein, milkyield
 
     def create_DBs(self):
         db.create_all()
@@ -70,6 +100,6 @@ class DBOperation():
 
 # myOperation = DBOperation()
 # myOperation.create_Records()
-# fat, protein = myOperation.calc_Monthly(animal_ID = 2714)
+# fat, protein = myOperation.calc_Monthly(animal_ID = "all")
 # print(fat)
 # print(protein)

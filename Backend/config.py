@@ -5,7 +5,7 @@ USER = 'admin'
 PASSWORD = 'mypassword'
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + USER + ':' + PASSWORD + \
     '@mysql-dashboard.cj7rotsa2rnv.us-east-2.rds.amazonaws.com:3306/flaskdemo'
-
+SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_POOL_RECYCLE = 3600
 
 WTF_CSRF_ENABLED = True
