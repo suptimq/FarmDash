@@ -47,7 +47,7 @@ export default {
         {
           id: "nav1",
           name: "DASHBOARD",
-          to: "/home",
+          to: "/home/1000",
           icon: "chalkboard",
           hasSubItem: true,
           subItems: [{ id: "subnav1", name: "PLACEHOLDER" }],

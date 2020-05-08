@@ -9,7 +9,7 @@
         <mdb-row>
           <mdb-col md="12">
             <mdb-card>
-              <mdb-card-body class="mx-4">
+              <mdb-card-body class="mx-4 cardbody">
                 <div class="text-center">
                   <h2 class="dark-grey-text mb-5"><strong>Sign in</strong></h2>
                 </div>
@@ -34,7 +34,7 @@
 
                 <!--Link for Forgetting Password -->
                 <p class="font-small grey-text d-flex justify-content-end pb-3">
-                  Forgot <a href="#" class="blue-text ml-1"> Password?</a>
+                  Forgot <router-link to="/forgetpassword" class="blue-text ml-1">Password?</router-link>
                 </p>
                 <div class="text-center mb-3">
                   <!--Button for Signin -->
@@ -48,10 +48,10 @@
                   >
                 </div>
               </mdb-card-body>
-              <mdb-modal-footer class="mx-5 pt-3 mb-1">
+              <mdb-modal-footer class="mx-5 pt-3 mb-1 footer-signin">
                 <!--Link for Signup -->
                 <p class="font-small grey-text d-flex justify-content-end">
-                  Not a member? <a href="#" class="blue-text ml-1"> Sign Up</a>
+                  Not a member? <router-link to="/signup" class="blue-text ml-1">Sign Up</router-link>
                 </p>
               </mdb-modal-footer>
             </mdb-card>
@@ -72,6 +72,9 @@ import {
   mdbBtn,
   mdbModalFooter,
 } from "mdbvue";
+// import backend from "@/services/backend.js";
+// import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
   name: "SignInNew",
@@ -88,22 +91,37 @@ export default {
     return {
       showModal: false,
       hintVisible: true,
-      email: "Tim@gmail.com",
-      password: "login",
+      email: "",
+      password: "",
     };
   },
   methods: {
     authenticate() {
-      this.$router.push({ name: "Home" });
+      // const resp = backend.login(this.email, this.password);
+      // if (resp['msg'] === 'success') {
+      //   var id = resp['id'];
+      //   this.login(resp['user']).then(() => this.$router.push({ path: `/home/${id}` }))
+      // }
+      // ID 1000 means herds
+      var id = 1000;
+      this.$router.push({ path: `/home/${id}` });
     },
+    ...mapActions({
+      login: "login", // map `this.login()` to `this.$store.dispatch('login')`
+    }),
   },
 };
 </script>
 
 <style scoped>
 .dairy-img {
-  max-height: 570px;
+  height: 570px;
 }
+
+.cardbody {
+  height: 570px;
+}
+
 .portrait {
   width: 120px;
   height: 120px;
@@ -111,7 +129,7 @@ export default {
 }
 
 .signin-btn {
-  margin-top: 28px;
+  margin-top: 40px;
   margin-bottom: -10px;
 }
 
@@ -121,6 +139,9 @@ export default {
   margin-bottom: -5px;
 }
 
+.footer-signin{
+  margin-top: -60px;
+}
 .form-elegant .font-small {
   font-size: 0.8rem;
 }

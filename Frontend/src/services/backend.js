@@ -1,7 +1,8 @@
 import axios from "axios";
 
 let $axios = axios.create({
-  baseURL: "http://localhost:5000/",
+  // Defined in the .env file
+  baseURL: process.env.VUE_APP_AWSURL,
   timeout: 0,
   headers: { "Content-Type": "application/json" },
 });
@@ -33,5 +34,31 @@ export default {
         params: params,
       })
       .then((response) => response.data);
+  },
+
+  login(username, password) {
+    const requestOptions = {
+      method: "POST",
+      url: "/login",
+      headers: { "Content-Type": "application/json" },
+      data: JSON.stringify({ username, password }),
+    };
+
+    return $axios(requestOptions);
+  },
+
+  logout() {
+    localStorage.removeItem("user");
+  },
+
+  register(user) {
+    const requestOptions = {
+      method: "POST",
+      url: "/register",
+      headers: { "Content-Type": "application/json" },
+      data: JSON.stringify(user),
+    };
+
+    return $axios(requestOptions);
   },
 };

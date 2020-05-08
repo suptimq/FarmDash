@@ -4,29 +4,11 @@
       <div class="search pos">
         <p class="text">Overview</p>
         <div class="input">
-          <mdb-dropdown>
-            <mdb-dropdown-toggle slot="toggle">
-              {{ displayID }}
-            </mdb-dropdown-toggle>
-            <mdb-dropdown-menu>
-              <mdb-dropdown-item
-                v-for="(cow, idx) in cows"
-                :key="cow.id"
-                :class="{ active: selected === cow.id }"
-              >
-                <router-link to="">
-                  <span :id="cow.id" @click="getIndividulInfo(cow.id)">
-                    {{ cow.name }}
-                  </span>
-                </router-link>
-
-                <div
-                  v-if="idx === cows.length - 2"
-                  class="dropdown-divider"
-                ></div>
-              </mdb-dropdown-item>
-            </mdb-dropdown-menu>
-          </mdb-dropdown>
+          <Dropdown
+            :items="cows"
+            :selected="selected"
+            @fetchItemID="handleFetch"
+          ></Dropdown>
         </div>
       </div>
       <div class="status pos">
@@ -48,63 +30,46 @@
 </template>
 
 <script>
-import {
-  mdbIcon,
-  mdbDropdown,
-  mdbDropdownItem,
-  mdbDropdownMenu,
-  mdbDropdownToggle,
-} from "mdbvue";
+import { mdbIcon } from "mdbvue";
 // eslint-disable-next-line no-unused-vars
 import backend from "@/services/backend.js";
+import Dropdown from "@/components/Dropdown.vue";
 
 export default {
   components: {
     mdbIcon,
-    mdbDropdown,
-    mdbDropdownItem,
-    mdbDropdownMenu,
-    mdbDropdownToggle,
+    Dropdown,
   },
   data() {
     return {
-      cows: [
-        { id: 1, name: "COW 1" },
-        { id: 2, name: "COW 2" },
-        { id: 3, name: "COW 3" },
-        { id: 1000, name: "HERDS" },
-      ],
-      selected: 1000,
+      cowsId: Array,
+      selected: Number,
     };
   },
+  created() {
+    this.cowsId = [26, 86, 2714, 1000];
+    this.selected = this.cowsId[this.cowsId.length - 1];
+  },
   computed: {
-    displayID: function() {
-      return this.selected === this.cows[this.cows.length - 1].id
-        ? "HERDS"
-        : "COW ID: " + this.selected;
+    cows: function() {
+      var cows = [];
+      for (const id of this.cowsId) {
+        var tmp = {};
+        tmp["id"] = id;
+        if (id === 1000) {
+          tmp["name"] = "HERDS";
+        } else {
+          tmp["name"] = "COW " + id;
+        }
+        cows.push(tmp);
+      }
+
+      return cows;
     },
   },
   methods: {
-    async getIndividulInfo(id) {
-      var path = "http://localhost:5000/cow";
-      const params = { ID: id };
-      var fatChartData;
-      var proteinChartData;
-      try {
-        const resp = await backend.fetchResource(path, params);
-        console.log(resp);
-        console.log(resp["fat_chart_data"]);
-        fatChartData = resp["fat_chart_data"];
-        proteinChartData = resp["protein_chart_data"];
-        this.selected = id;
-
-        this.$router.push({
-          path: `/home/${id}`,
-          params: { fatData: fatChartData, proteinData: proteinChartData },
-        });
-      } catch (error) {
-        console.log(error);
-      }
+    handleFetch(id) {
+      this.$router.push({ path: `/home/${id}` });
     },
   },
 };
@@ -149,14 +114,6 @@ header {
 .active-cyan .fa,
 .active-cyan-2 .fa {
   color: #4dd0e1;
-}
-
-.dropdown-item.active {
-  background: lightgray;
-}
-
-a {
-  color: black;
 }
 
 .dropdown-divider {
