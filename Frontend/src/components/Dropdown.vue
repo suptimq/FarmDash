@@ -2,18 +2,18 @@
   <div>
     <mdb-dropdown>
       <mdb-dropdown-toggle slot="toggle">
-        {{ displayID }}
+        <span class="text">{{ displayID }}</span>
       </mdb-dropdown-toggle>
       <mdb-dropdown-menu>
         <mdb-dropdown-item
           v-for="(item, idx) in items"
           :key="idx"
           :class="{ active: selectedTag === item.id }"
+          :id="item.id"
+          @click="getID(item.id)"
         >
           <router-link to="">
-            <span :id="item.id" @click="getID(item.id)">
-              {{ item.name }}
-            </span>
+            {{ item.name }}
           </router-link>
         </mdb-dropdown-item>
       </mdb-dropdown-menu>
@@ -80,5 +80,9 @@ export default {
 }
 a {
   color: black;
+}
+
+.text {
+  font-weight: bold;
 }
 </style>

@@ -22,16 +22,21 @@
             :selected="fatSelectedYear"
             @fetchItemID="handleFatYear"
           ></Dropdown>
-          <!-- <p>{{ fatChartData }}</p> -->
         </div>
         <div class="card">
           <BarPlotChart
             class="chart"
-            :chart-data="fatChartData"
-            :options="chartOptions"
+            :chart-data="fatBarData"
+            :options="barChartOptions"
           />
         </div>
-        <div class="card"></div>
+        <div class="card">
+          <PiePlotChart
+            class="chart"
+            :chart-data="fatPieData"
+            :options="pieChartOptions"
+          />
+        </div>
         <div class="info">
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Average Protein</p>
@@ -49,18 +54,19 @@
           ></Dropdown>
         </div>
         <div class="card">
-          <!-- <PiePlotChart
-            class="chart"
-            :chart-data="pieData"
-            :options="pieOptions"
-          /> -->
           <BarPlotChart
             class="chart"
-            :chart-data="proteinChartData"
-            :options="chartOptions"
+            :chart-data="proteinBarData"
+            :options="barChartOptions"
           />
         </div>
-        <div class="card"></div>
+        <div class="card">
+          <PiePlotChart
+            class="chart"
+            :chart-data="proteinPieData"
+            :options="pieChartOptions"
+          />
+        </div>
       </div>
       <div class="whole second-row">
         <div class="info">
@@ -81,7 +87,7 @@
 import { mdbIcon } from "mdbvue";
 import charts from "@/services/charts.js";
 import BarPlotChart from "@/services/charts/BarPlotChart.js";
-// import PiePlotChart from "@/services/charts/PiePlotChart.js";
+import PiePlotChart from "@/services/charts/PiePlotChart.js";
 import LinePlotChart from "@/services/charts/LinePlotChart.js";
 import backend from "@/services/backend.js";
 import Dropdown from "@/components/Dropdown.vue";
@@ -94,6 +100,7 @@ export default {
   components: {
     mdbIcon,
     BarPlotChart,
+    PiePlotChart,
     LinePlotChart,
     Dropdown,
   },
@@ -116,6 +123,9 @@ export default {
       fatSelectedYear: 2018,
       proteinSelectedMonth: 1,
       proteinSelectedYear: 2018,
+      // For plotting pie charts
+      thisYearTotalFat: Number,
+      thisYearTotalProtein: Number,
       monthList: [
         { id: 1, name: "Jan" },
         { id: 2, name: "Feb" },
@@ -134,7 +144,7 @@ export default {
         { id: 2018, name: "2018" },
         { id: 2019, name: "2019" },
       ],
-      chartOptions: {
+      barChartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -146,6 +156,10 @@ export default {
             },
           ],
         },
+      },
+      pieChartOptions: {
+        hoverBorderWidth: 20,
+        maintainAspectRatio: false,
       },
     };
   },
@@ -159,21 +173,35 @@ export default {
   mounted() {},
   updated() {},
   computed: {
-    fatChartData: function() {
+    fatBarData: function() {
       console.log("computed");
       // console.log(this.fatData);
       const [key, val] = Object.entries(this.fatData)[
         this.fatSelectedMonth - 1
       ];
 
-      return this.fillBarData(key, val);
+      return this.fillBarData(key, val, this.fatSelectedYear);
     },
-    proteinChartData: function() {
+    proteinBarData: function() {
       const [key, val] = Object.entries(this.proteinData)[
         this.proteinSelectedMonth - 1
       ];
 
-      return this.fillBarData(key, val);
+      return this.fillBarData(key, val, this.proteinSelectedYear);
+    },
+    fatPieData: function() {
+      const [key, val] = Object.entries(this.fatData)[
+        this.fatSelectedMonth - 1
+      ];
+
+      return this.fillPieData(key, val, 1);
+    },
+    proteinPieData: function() {
+      const [key, val] = Object.entries(this.proteinData)[
+        this.proteinSelectedMonth - 1
+      ];
+
+      return this.fillPieData(key, val, 2);
     },
   },
   watch: {
@@ -185,43 +213,74 @@ export default {
     fatSelectedYear: function(year) {
       console.log("watch");
       this.fatData = this.fat[year];
+      this.thisYearTotalFat = this.sumArrays(this.fatData);
     },
     proteinSelectedYear: function(year) {
       this.proteinData = this.protein[year];
+      this.thisYearTotalProtein = this.sumArrays(this.proteinData);
     },
   },
   methods: {
     async getHerdsData(id) {
       var path = "/cow";
-      id = 26;
       const params = { ID: id };
       try {
+        console.log("send", id);
         const resp = await backend.fetchResource(path, params);
-        // console.log(resp);
-        // console.log(resp["fat_chart_data"]);
+        console.log(resp);
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
         this.fatData = this.fat[this.fatSelectedYear];
         this.proteinData = this.protein[this.proteinSelectedYear];
+        // Sum
+        this.thisYearTotalFat = this.sumArrays(this.fatData);
+        this.thisYearTotalProtein = this.sumArrays(this.proteinData);
         // Set loading status
         this.loading = false;
       } catch (error) {
         console.log(error);
       }
     },
-    fillBarData(key, val) {
+    // Fill bar charts data
+    fillBarData(key, val, year) {
       var chartData = {};
       var datasets = [];
       var numOfDay = val.length;
       var labels = this.range(1, numOfDay);
 
       var tmpList = {};
-      tmpList["label"] = key;
+      tmpList["label"] = key + "/" + year;
       tmpList["backgroundColor"] = "#f87979";
       tmpList["data"] = val;
 
       datasets.push(tmpList);
+      chartData["labels"] = labels;
+      chartData["datasets"] = datasets;
 
+      return chartData;
+    },
+    // Fill pie charts data
+    fillPieData(key, val, type) {
+      var chartData = {};
+      var datasets = [];
+
+      var labels;
+      var totalVal;
+      // Type-1: Fat, Type-2: Protein
+      if (type === 1) {
+        labels = ["Fat", "Total Fat"];
+        totalVal = this.thisYearTotalFat;
+      } else {
+        labels = ["Protein", "Total Protein"];
+        totalVal = this.thisYearTotalProtein;
+      }
+
+      var tmpList = {};
+      tmpList["label"] = key;
+      tmpList["backgroundColor"] = ["#41B883", "#E46651"];
+      tmpList["data"] = [this.sumArray(val), totalVal];
+
+      datasets.push(tmpList);
       chartData["labels"] = labels;
       chartData["datasets"] = datasets;
 
@@ -246,6 +305,20 @@ export default {
     },
     handleProteinYear(id) {
       this.proteinSelectedYear = id;
+    },
+    // Sum function
+    // Items should be dictionary with {key-month, value-vals}
+    sumArrays(items) {
+      var vals = Object.values(items);
+      var tmpSum = 0;
+      for (const val of vals) {
+        tmpSum += this.sumArray(val);
+      }
+      return tmpSum;
+    },
+    // Item should be an int array
+    sumArray(item) {
+      return item.reduce((a, b) => a + b, 0);
     },
   },
 };
