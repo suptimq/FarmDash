@@ -44,13 +44,7 @@ export default {
       data: JSON.stringify({ username, password }),
     };
 
-    return $axios(requestOptions).then((user) => {
-      if (user.token) {
-        localStorage.setItem("use", JSON.stringify(user));
-      }
-
-      return user;
-    });
+    return $axios(requestOptions);
   },
 
   logout() {

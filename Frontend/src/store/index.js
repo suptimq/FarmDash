@@ -6,17 +6,24 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     layout: "SignLayout",
+    user: {},
+    isAuthenticated: true,
   },
   mutations: {
-    SET_LAYOUT(state, payload) {
-      state.layout = payload;
+    setUserData(state, payload) {
+      state.user = payload.userData;
+      state.isAuthenticated = true;
     },
   },
   getters: {
-    layout(state) {
-      return state.layout;
+    isAuthenticated(state) {
+      return state.isAuthenticated;
     },
   },
-  actions: {},
+  actions: {
+    login(context, userData) {
+      context.commit("setUserData", { userData });
+    },
+  },
   modules: {},
 });

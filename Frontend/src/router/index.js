@@ -4,6 +4,7 @@ import Home from "@/views/Home.vue";
 import Table from "@/views/Table.vue";
 import SignIn from "@/components/SignIn.vue";
 import Dash from "@/views/Dash.vue";
+import store from "@/store";
 
 Vue.use(VueRouter);
 
@@ -25,16 +26,17 @@ const routes = [
     component: Dash,
     children: [
       {
-        path: "/home",
-        name: "Home",
-        component: Home,
-        props: true,
-      },
-      {
         path: "/home/:id",
         name: "HomeId",
         component: Home,
         props: true,
+        beforeEnter(to, from, next) {
+          if (!store.getters.isAuthenticated) {
+            next("/signin");
+          } else {
+            next();
+          }
+        },
       },
       {
         path: "/user",

@@ -73,6 +73,8 @@ import {
   mdbModalFooter,
 } from "mdbvue";
 // import backend from "@/services/backend.js";
+// import axios from "axios";
+import { mapActions } from "vuex";
 
 export default {
   name: "SignInNew",
@@ -89,16 +91,24 @@ export default {
     return {
       showModal: false,
       hintVisible: true,
-      email: "Tim@gmail.com",
-      password: "login",
+      email: "",
+      password: "",
     };
   },
   methods: {
     authenticate() {
+      // const resp = backend.login(this.email, this.password);
+      // if (resp['msg'] === 'success') {
+      //   var id = resp['id'];
+      //   this.login(resp['user']).then(() => this.$router.push({ path: `/home/${id}` }))
+      // }
       // ID 1000 means herds
       var id = 1000;
       this.$router.push({ path: `/home/${id}` });
     },
+    ...mapActions({
+      login: "login", // map `this.login()` to `this.$store.dispatch('login')`
+    }),
   },
 };
 </script>
