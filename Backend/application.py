@@ -28,12 +28,13 @@ def index():
         try:
             db.session.add(data_entered)
             db.session.commit()
-            db.session.close()
         except:
             db.session.rollback()
+        db.session.close()
         return render_template('thanks.html', notes=notes)
 
     return render_template('base.html')
+
 
 @application.route('/register', methods=['GET', 'POST'])
 def register():
@@ -45,10 +46,10 @@ def register():
         try:
             db.session.add(data_entered)
             db.session.commit()
-            db.session.close()
         except:
             db.session.rollback()
             print("rolled back")
+        db.session.close()
         return render_template('thanks.html', notes="add user successful")
 
     return render_template('base.html')
@@ -70,6 +71,7 @@ def get_data():
         'milkyield_chart_data': milkyield
     }
     return jsonify(response)
+
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')

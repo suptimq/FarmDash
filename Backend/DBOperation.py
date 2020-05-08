@@ -3,6 +3,7 @@ from application.models import Data, Records
 import pandas as pd
 import copy
 
+
 class DBOperation():
     def __init__(self):
         self.records = []
@@ -20,7 +21,7 @@ class DBOperation():
         fat = {}
         fat["2018"] = {}
         fat["2019"] = {}
-        for i in range(1,13):
+        for i in range(1, 13):
             fat["2018"][str(i)] = []
             fat["2019"][str(i)] = []
         protein = copy.deepcopy(fat)
@@ -43,15 +44,18 @@ class DBOperation():
                     AVGYieldRecords[record.time].append(record.milk_yield)
             for time in AVGFatRecords:
                 ymd = time.split("-")
-                AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
-                AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (len(AVGProteinRecords[time]) > 0) else sum(AVGProteinRecords[time])
-                AVGYield = sum(AVGYieldRecords[time]) / len(AVGYieldRecords[time]) if (len(AVGYieldRecords[time]) > 0) else sum(AVGYieldRecords[time])
+                AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (
+                    len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
+                AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (
+                    len(AVGProteinRecords[time]) > 0) else sum(AVGProteinRecords[time])
+                AVGYield = sum(AVGYieldRecords[time]) / len(AVGYieldRecords[time]) if (
+                    len(AVGYieldRecords[time]) > 0) else sum(AVGYieldRecords[time])
                 fat[ymd[0]][ymd[1]].append(AVGFat)
                 protein[ymd[0]][ymd[1]].append(AVGProtein)
                 milkyield[ymd[0]][ymd[1]].append(AVGYield)
 
         else:
-            records = Records.query.filter_by(animal_ID = animal_ID).all()
+            records = Records.query.filter_by(animal_ID=animal_ID).all()
             if len(records) != 0:
                 for i in range(len(records)):
                     record = records[i]
@@ -77,7 +81,8 @@ class DBOperation():
                 dmy = time.split("/")
                 time = dmy[2] + "-" + str(int(dmy[1])) + "-" + str(int(dmy[0]))
             else:
-                time = str(time.year) + "-" + str(time.day) + "-" + str(time.month)
+                time = str(time.year) + "-" + str(time.day) + \
+                    "-" + str(time.month)
 
             animal_ID = int(file["Animal_ID"][i])
             group_ID = int(file["Group_ID"][i])
@@ -88,18 +93,23 @@ class DBOperation():
                 milk_yield = 0
             avg_fat = float(file["Avg_Fat(%)"][i])
             avg_protein = float(file["Avg_Protein(%)"][i])
-            item = Records(userID, time, animal_ID, group_ID, status, milk_yield, avg_fat, avg_protein)
+            item = Records(userID, time, animal_ID, group_ID,
+                           status, milk_yield, avg_fat, avg_protein)
             try:
                 db.session.add(item)
                 db.session.commit()
-                db.session.close()
                 # print(item)
             except Exception as e:
                 db.session.rollback()
                 print("Rolledback:", e)
 
-# myOperation = DBOperation()
-# myOperation.create_Records()
-# fat, protein = myOperation.calc_Monthly(animal_ID = "all")
-# print(fat)
-# print(protein)
+            db.session.close()
+
+
+if __name__ == "__main__":
+
+    myOperation = DBOperation()
+    # myOperation.create_Records()
+    # fat, protein = myOperation.calc_Monthly(animal_ID = 2714)
+    # print(fat)
+    # print(protein)

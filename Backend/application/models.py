@@ -1,9 +1,10 @@
 from application import db
 
+
 class Data(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     notes = db.Column(db.String(128), index=True, unique=False)
-    
+
     def __init__(self, notes):
         self.notes = notes
 
@@ -16,6 +17,7 @@ class User(db.Model):
     email = db.Column(db.String(128), index=True, unique=False)
     username = db.Column(db.String(128), index=True, unique=True)
     password = db.Column(db.String(128), index=True, unique=False)
+
     def __init__(self, email, username, password):
         self.email = email
         self.username = username
@@ -23,6 +25,7 @@ class User(db.Model):
 
     def __repr__(self):
         return '<Data %r>' % self.username
+
 
 class Records(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -46,4 +49,4 @@ class Records(db.Model):
         self.avg_Protein = avg_protein
 
     def __repr__(self):
-        return '<Data animal_ID:%r at %r>' % (self.animal_ID, self.time)
+        return '<Data userID:%r animal_ID:%r at %r>' % (self.userID, self.animal_ID, self.time)
