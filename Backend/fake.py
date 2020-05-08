@@ -158,6 +158,7 @@ if __name__ == "__main__":
     herd_generator = FakeHerdGenerator(
         write=True, num_data=1, num_group=1, start='2018-03-01', end='2018-03-02')
 
+    # These two functions should not be ran at the same time since unfixed database session problem
     # user_generator.generate_Users()
     herd_generator.generate_Records()
 
