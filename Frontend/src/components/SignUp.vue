@@ -9,7 +9,7 @@
         <mdb-row>
           <mdb-col md="12">
             <mdb-card>
-              <mdb-card-body class="mx-4">
+              <mdb-card-body class="mx-4 cardbody">
                 <div class="text-center">
                   <h2 class="dark-grey-text mb-5"><strong>Sign up</strong></h2>
                 </div>
@@ -35,7 +35,7 @@
                 <!-- Link for Signin -->
                 <p class="font-small grey-text d-flex justify-content-end">
                   Have an account?
-                  <a href="#" class="blue-text ml-1"> Sign in</a>
+                  <router-link to="/signin" class="blue-text ml-1">Sign in</router-link>
                 </p>
                 <div class="text-center mb-3">
                   <!-- Button for Signin -->
@@ -44,7 +44,7 @@
                     color="default"
                     rounded
                     class="btn-block z-depth-1a signup-btn"
-                    >Sign in</mdb-btn
+                    >Sign up</mdb-btn
                   >
                 </div>
               </mdb-card-body>
@@ -80,7 +80,7 @@ export default {
 
 <style scoped>
 .dairy-img {
-  max-height: 570px;
+  height: 570px;
 }
 .portrait {
   width: 120px;
@@ -97,6 +97,10 @@ export default {
 .signup-btn {
   margin-top: 29px;
   margin-bottom: 15px;
+}
+
+.cardbody {
+  height: 570px;
 }
 
 .form-elegant .font-small {
