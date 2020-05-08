@@ -9,7 +9,7 @@
         <mdb-row>
           <mdb-col md="12">
             <mdb-card>
-              <mdb-card-body class="mx-4">
+              <mdb-card-body class="mx-4 cardbody">
                 <div class="text-center">
                   <h2 class="dark-grey-text mb-5">
                     <strong>Retrieve Password</strong>
@@ -46,7 +46,7 @@
                 </mdb-row>
 
                 <p class="font-small grey-text d-flex justify-content-end pb-3">
-                  Go back? <a href="#" class="blue-text ml-1">Sign In</a>
+                  Go back? <router-link to="/signin" class="blue-text ml-1">Sign in</router-link>
                 </p>
                 <div class="text-center mb-3">
                   <mdb-btn
@@ -54,6 +54,7 @@
                     gradient="peach"
                     rounded
                     class="btn-block z-depth-1a submit-btn"
+                    @click="submit"
                     >Submit</mdb-btn
                   >
                 </div>
@@ -84,12 +85,22 @@ export default {
       showModal: false,
     };
   },
+  methods: {
+    // Submit the verification code to reset the password
+    submit() {
+      this.$router.push({ path: '/resetpassword' });
+    },
+  },
 };
 </script>
 
 <style scoped>
 .dairy-img {
-  max-height: 570px;
+  height: 570px;
+}
+
+.cardbody {
+  height: 570px;
 }
 
 .forget-panel {

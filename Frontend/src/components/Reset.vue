@@ -9,7 +9,7 @@
         <mdb-row>
           <mdb-col md="12">
             <mdb-card>
-              <mdb-card-body class="mx-4">
+              <mdb-card-body class="mx-4 cardbody">
                 <div class="text-center">
                   <h2 class="dark-grey-text mb-5">
                     <strong>Reset Password</strong>
@@ -41,6 +41,7 @@
                     gradient="peach"
                     rounded
                     class="btn-block z-depth-1a reset-btn"
+                    @click="resetpassword"
                     >Reset</mdb-btn
                   >
                 </div>
@@ -71,17 +72,26 @@ export default {
       showModal: false,
     };
   },
+  methods:{resetpassword() {
+      this.$router.push({ path: '/signin' });
+    },
+  },
 };
 </script>
 
 <style scoped>
 .dairy-img {
-  max-height: 570px;
+  height: 570px;
 }
+
 .portrait {
   width: 120px;
   height: 120px;
   margin-top: -20px;
+}
+
+.cardbody {
+  height: 570px;
 }
 
 .reset-btn {

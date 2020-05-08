@@ -3,6 +3,10 @@ import VueRouter from "vue-router";
 import Home from "@/views/Home.vue";
 import Table from "@/views/Table.vue";
 import SignIn from "@/components/SignIn.vue";
+import SignUp from "@/components/SignUp.vue";
+import Forget from "@/components/Forget.vue";
+import Reset from "@/components/Reset.vue";
+
 import Dash from "@/views/Dash.vue";
 
 Vue.use(VueRouter);
@@ -18,6 +22,21 @@ const routes = [
     path: "/signin",
     name: "Signin",
     component: SignIn,
+  },
+  {
+    path: "/forgetpassword",
+    name: "Forget",
+    component: Forget,
+  },
+  {
+    path: "/resetpassword",
+    name: "Reset",
+    component: Reset,
+  },
+  {
+    path: "/signup",
+    name: "Signyp",
+    component: SignUp,
   },
   {
     path: "/",
