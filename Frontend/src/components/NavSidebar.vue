@@ -62,6 +62,7 @@ export default {
       this.selected = id;
     },
     logout() {
+      this.$store.dispatch("reset");
       this.$router.push({ name: "Signin" });
     },
   },

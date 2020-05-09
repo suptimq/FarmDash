@@ -2,7 +2,7 @@ import axios from "axios";
 
 let $axios = axios.create({
   // Defined in the .env file
-  baseURL: process.env.VUE_APP_AWSURL,
+  baseURL: process.env.VUE_APP_BASEURL,
   timeout: 0,
   headers: { "Content-Type": "application/json" },
 });
@@ -36,12 +36,12 @@ export default {
       .then((response) => response.data);
   },
 
-  login(username, password) {
+  login(email, password) {
     const requestOptions = {
       method: "POST",
       url: "/login",
       headers: { "Content-Type": "application/json" },
-      data: JSON.stringify({ username, password }),
+      data: JSON.stringify({ email, password }),
     };
 
     return $axios(requestOptions);
@@ -59,6 +59,7 @@ export default {
       data: JSON.stringify(user),
     };
 
-    return $axios(requestOptions);
+    console.log(requestOptions);
+    // return $axios(requestOptions);
   },
 };

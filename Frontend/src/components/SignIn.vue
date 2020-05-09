@@ -103,8 +103,8 @@ export default {
       showModal: false,
       passwordUnmatched: false,
       emailNotFound: false,
-      email: "",
-      password: "",
+      email: "123@gmail.com",
+      password: "123",
     };
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
         const resp = data.data;
         // console.log(resp);
         if (resp["code"] === 200) {
-          var id = resp["id"];
+          var id = "all";
           var userData = resp["user"];
           localStorage.setItem("user", JSON.stringify(userData));
           this.login(userData).then(() =>
