@@ -26,15 +26,24 @@
                   v-model="password"
                 />
                 <div class="hint">
-                  <!--Hint for wrong password -->
-                  <p v-if="hintVisible" class="font-small red-text d-flex">
-                    Incorrect password or username
+                  <!--Hint for wrong users' information -->
+                  <p v-if="emailNotFound" class="font-small red-text d-flex">
+                    Incorrect Email
+                  </p>
+                  <p
+                    v-else-if="passwordUnmatched"
+                    class="font-small red-text d-flex"
+                  >
+                    Incorrect Password
                   </p>
                 </div>
 
                 <!--Link for Forgetting Password -->
                 <p class="font-small grey-text d-flex justify-content-end pb-3">
-                  Forgot <router-link to="/forgetpassword" class="blue-text ml-1">Password?</router-link>
+                  Forgot
+                  <router-link to="/forgetpassword" class="blue-text ml-1"
+                    >Password?</router-link
+                  >
                 </p>
                 <div class="text-center mb-3">
                   <!--Button for Signin -->
@@ -51,7 +60,10 @@
               <mdb-modal-footer class="mx-5 pt-3 mb-1 footer-signin">
                 <!--Link for Signup -->
                 <p class="font-small grey-text d-flex justify-content-end">
-                  Not a member? <router-link to="/signup" class="blue-text ml-1">Sign Up</router-link>
+                  Not a member?
+                  <router-link to="/signup" class="blue-text ml-1"
+                    >Sign Up</router-link
+                  >
                 </p>
               </mdb-modal-footer>
             </mdb-card>
@@ -72,8 +84,7 @@ import {
   mdbBtn,
   mdbModalFooter,
 } from "mdbvue";
-// import backend from "@/services/backend.js";
-// import axios from "axios";
+import backend from "@/services/backend.js";
 import { mapActions } from "vuex";
 
 export default {
@@ -90,21 +101,37 @@ export default {
   data() {
     return {
       showModal: false,
-      hintVisible: true,
+      passwordUnmatched: false,
+      emailNotFound: false,
       email: "",
       password: "",
     };
   },
   methods: {
-    authenticate() {
-      // const resp = backend.login(this.email, this.password);
-      // if (resp['msg'] === 'success') {
-      //   var id = resp['id'];
-      //   this.login(resp['user']).then(() => this.$router.push({ path: `/home/${id}` }))
-      // }
+    async authenticate() {
+      const data = await backend.login(this.email, this.password);
+      if (data === undefined) {
+        // Handle Exception
+      } else {
+        const resp = data.data;
+        // console.log(resp);
+        if (resp["code"] === 200) {
+          var id = resp["id"];
+          var userData = resp["user"];
+          localStorage.setItem("user", JSON.stringify(userData));
+          this.login(userData).then(() =>
+            this.$router.push({ path: `/home/${id}` })
+          );
+        } else {
+          if (resp["code"] === 100) {
+            this.passwordUnmatched = true;
+          } else if (resp["code"] === 300) {
+            this.emailNotFound = true;
+          }
+        }
+      }
+
       // ID 1000 means herds
-      var id = 1000;
-      this.$router.push({ path: `/home/${id}` });
     },
     ...mapActions({
       login: "login", // map `this.login()` to `this.$store.dispatch('login')`
@@ -139,7 +166,7 @@ export default {
   margin-bottom: -5px;
 }
 
-.footer-signin{
+.footer-signin {
   margin-top: -60px;
 }
 .form-elegant .font-small {

@@ -125,6 +125,7 @@ import PiePlotChart from "@/services/charts/PiePlotChart.js";
 import LinePlotChart from "@/services/charts/LinePlotChart.js";
 import backend from "@/services/backend.js";
 import Dropdown from "@/components/Dropdown.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "Home",
@@ -288,8 +289,15 @@ export default {
     },
     // Check id
     check(id) {
-      return id === "1000" ? { ID: "all" } : { ID: id };
+      var email = this.getEmail();
+      var params = { email: email, ID: id === "1000" ? "all" : id };
+      return params;
     },
+    ...mapActions({
+      getEmail: "getEmail",
+    }),
+    // Hanlde window
+    handleUnload() {},
     // Fill bar charts data
     fillBarData(key, val, year, section) {
       var chartData = {};

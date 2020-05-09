@@ -14,20 +14,33 @@
                   <h2 class="dark-grey-text mb-5"><strong>Sign up</strong></h2>
                 </div>
                 <img class="portrait" src="@/assets/cattle.png" />
-                <mdb-input label="Your email" type="email" />
+                <mdb-input label="Username" v-model="username" required />
                 <mdb-input
-                  label="Your password"
-                  type="password"
-                  containerClass="mb-0"
+                  label="Email"
+                  v-model="email"
+                  type="email"
+                  required
                 />
                 <mdb-input
-                  label="Confirm your password"
+                  label="Password"
                   type="password"
                   containerClass="mb-0"
+                  v-model="password"
+                  required
+                />
+                <mdb-input
+                  label="Confirm Password"
+                  type="password"
+                  containerClass="mb-0"
+                  v-model="passwordConfirmed"
+                  required
                 />
                 <div class="hint">
                   <!--Hint for unmatched passwords-->
-                  <p v-if="hintVisible" class="font-small red-text d-flex">
+                  <p
+                    v-if="password !== passwordConfirmed"
+                    class="font-small red-text d-flex"
+                  >
                     Passwords don't match
                   </p>
                 </div>
@@ -35,7 +48,9 @@
                 <!-- Link for Signin -->
                 <p class="font-small grey-text d-flex justify-content-end">
                   Have an account?
-                  <router-link to="/signin" class="blue-text ml-1">Sign in</router-link>
+                  <router-link to="/signin" class="blue-text ml-1"
+                    >Sign in</router-link
+                  >
                 </p>
                 <div class="text-center mb-3">
                   <!-- Button for Signin -->
@@ -44,6 +59,7 @@
                     color="default"
                     rounded
                     class="btn-block z-depth-1a signup-btn"
+                    @click="register"
                     >Sign up</mdb-btn
                   >
                 </div>
@@ -58,6 +74,7 @@
 
 <script>
 import { mdbRow, mdbCol, mdbCard, mdbCardBody, mdbInput, mdbBtn } from "mdbvue";
+import backend from "@/services/backend.js";
 
 export default {
   name: "SignUpNew",
@@ -72,8 +89,48 @@ export default {
   data() {
     return {
       showModal: false,
-      hintVisible: true,
+      userExist: false,
+      dbError: false,
+      username: "",
+      email: "",
+      password: "",
+      passwordConfirmed: "",
     };
+  },
+  methods: {
+    async register() {
+      var user = this.encapsulate();
+      const data = await backend.register(user);
+      if (data === undefined) {
+        // Handle Exception
+      } else {
+        const resp = data.data;
+        console.log(resp);
+        if (resp["code"] === 200) {
+          this.$router.push({ path: `/signin` });
+        } else {
+          if (resp["code"] === 100) {
+            this.userExist = true;
+          } else if (resp["code"] === 300) {
+            this.dbError = true;
+          }
+        }
+      }
+    },
+    encapsulate() {
+      var user = {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+      };
+      return user;
+    },
+    reset() {
+      this.username = "";
+      this.email = "";
+      this.password = "";
+      this.passwordConfirmed = "";
+    },
   },
 };
 </script>
