@@ -4,7 +4,7 @@
       <NavSidebar />
     </nav>
     <div class="view-container">
-      <Header />
+      <!-- <Header /> -->
       <router-view />
     </div>
   </div>
@@ -12,14 +12,14 @@
 
 <script>
 import NavSidebar from "@/components/NavSidebar";
-import Header from "@/components/Header";
+// import Header from "@/components/Header";
 
 export default {
   name: "app",
 
   components: {
     NavSidebar,
-    Header,
+    // Header,
   },
 
   data() {

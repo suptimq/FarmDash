@@ -4,7 +4,7 @@
       <mdb-dropdown-toggle slot="toggle">
         <span class="text">{{ displayID }}</span>
       </mdb-dropdown-toggle>
-      <mdb-dropdown-menu>
+      <mdb-dropdown-menu :style="scroll ? scrollType : ''">
         <mdb-dropdown-item
           v-for="(item, idx) in items"
           :key="idx"
@@ -45,10 +45,18 @@ export default {
       type: Number,
       required: true,
     },
+    scroll: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       selectedTag: "",
+      scrollType: {
+        "overflow-y": "scroll",
+        height: "200px",
+      },
     };
   },
   created() {

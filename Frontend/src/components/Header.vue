@@ -7,6 +7,7 @@
           <Dropdown
             :items="cows"
             :selected="selected"
+            :scroll="scroll"
             @fetchItemID="handleFetch"
           ></Dropdown>
         </div>
@@ -40,14 +41,28 @@ export default {
     mdbIcon,
     Dropdown,
   },
+  props: {
+    cowData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       cowsId: Array,
       selected: Number,
+      scroll: true,
     };
   },
   created() {
-    this.cowsId = [26, 86, 2714, 1000];
+    // Sort the ID
+    this.cowsId = this.cowData
+      .slice(0, this.cowData.length - 1)
+      .sort((a, b) => parseInt(a) - parseInt(b));
+    // Number -100 means the whole herds
+    if (this.cowsId[this.cowsId.length - 1] !== -100) {
+      this.cowsId.push(-100);
+    }
     this.selected = this.cowsId[this.cowsId.length - 1];
   },
   computed: {
@@ -56,7 +71,7 @@ export default {
       for (const id of this.cowsId) {
         var tmp = {};
         tmp["id"] = id;
-        if (id === 1000) {
+        if (id === -100) {
           tmp["name"] = "HERDS";
         } else {
           tmp["name"] = "COW " + id;

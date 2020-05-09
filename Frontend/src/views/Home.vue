@@ -5,110 +5,113 @@
         <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <div v-else id="content" class="content">
-      <div class="stat first-row">
-        <!-- Fat -->
-        <div class="info">
-          <mdb-icon icon="info-circle" size="2x" />
-          <p class="text">Average Fat</p>
-          <Dropdown
-            class="date dropdown"
-            :items="monthList"
-            :selected="fatSelectedMonth"
-            @fetchItemID="handleFatMonth"
-          ></Dropdown>
-          <Dropdown
-            class="date dropdown"
-            :items="yearList"
-            :selected="fatSelectedYear"
-            @fetchItemID="handleFatYear"
-          ></Dropdown>
+    <div v-else>
+      <Header :cowData="cows" />
+      <div id="content" class="content">
+        <div class="stat first-row">
+          <!-- Fat -->
+          <div class="info">
+            <mdb-icon icon="info-circle" size="2x" />
+            <p class="text">Average Fat</p>
+            <Dropdown
+              class="date dropdown"
+              :items="monthList"
+              :selected="fatSelectedMonth"
+              @fetchItemID="handleFatMonth"
+            ></Dropdown>
+            <Dropdown
+              class="date dropdown"
+              :items="yearList"
+              :selected="fatSelectedYear"
+              @fetchItemID="handleFatYear"
+            ></Dropdown>
+          </div>
+          <div class="card">
+            <BarPlotChart
+              class="chart"
+              :chart-data="fatBarData"
+              :options="avgBarChartOptions"
+            />
+          </div>
+          <!-- Protein -->
+          <div class="info">
+            <mdb-icon icon="info-circle" size="2x" />
+            <p class="text">Average Protein</p>
+            <Dropdown
+              class="date dropdown"
+              :items="monthList"
+              :selected="proteinSelectedMonth"
+              @fetchItemID="handleProteinMonth"
+            ></Dropdown>
+            <Dropdown
+              class="date dropdown"
+              :items="yearList"
+              :selected="proteinSelectedYear"
+              @fetchItemID="handleProteinYear"
+            ></Dropdown>
+          </div>
+          <div class="card">
+            <BarPlotChart
+              class="chart"
+              :chart-data="proteinBarData"
+              :options="avgBarChartOptions"
+            />
+          </div>
+          <!-- Yield -->
+          <div class="info">
+            <mdb-icon icon="info-circle" size="2x" />
+            <p class="text">Yield</p>
+            <Dropdown
+              class="date dropdown"
+              :items="monthList"
+              :selected="yieldSelctedMonth"
+              @fetchItemID="handleYieldMonth"
+            ></Dropdown>
+            <Dropdown
+              class="date dropdown"
+              :items="yearList"
+              :selected="yieldSelectedYear"
+              @fetchItemID="handleYieldYear"
+            ></Dropdown>
+          </div>
+          <div class="card yield">
+            <BarPlotChart
+              class="chart"
+              :chart-data="yieldBarData"
+              :options="valBarChartOptions"
+            />
+          </div>
+          <div class="card yield">
+            <PiePlotChart
+              class="chart"
+              :chart-data="yieldPieData"
+              :options="pieChartOptions"
+            />
+          </div>
         </div>
-        <div class="card">
-          <BarPlotChart
-            class="chart"
-            :chart-data="fatBarData"
-            :options="avgBarChartOptions"
-          />
-        </div>
-        <!-- Protein -->
-        <div class="info">
-          <mdb-icon icon="info-circle" size="2x" />
-          <p class="text">Average Protein</p>
-          <Dropdown
-            class="date dropdown"
-            :items="monthList"
-            :selected="proteinSelectedMonth"
-            @fetchItemID="handleProteinMonth"
-          ></Dropdown>
-          <Dropdown
-            class="date dropdown"
-            :items="yearList"
-            :selected="proteinSelectedYear"
-            @fetchItemID="handleProteinYear"
-          ></Dropdown>
-        </div>
-        <div class="card">
-          <BarPlotChart
-            class="chart"
-            :chart-data="proteinBarData"
-            :options="avgBarChartOptions"
-          />
-        </div>
-        <!-- Yield -->
-        <div class="info">
-          <mdb-icon icon="info-circle" size="2x" />
-          <p class="text">Yield</p>
-          <Dropdown
-            class="date dropdown"
-            :items="monthList"
-            :selected="yieldSelctedMonth"
-            @fetchItemID="handleYieldMonth"
-          ></Dropdown>
-          <Dropdown
-            class="date dropdown"
-            :items="yearList"
-            :selected="yieldSelectedYear"
-            @fetchItemID="handleYieldYear"
-          ></Dropdown>
-        </div>
-        <div class="card yield">
-          <BarPlotChart
-            class="chart"
-            :chart-data="yieldBarData"
-            :options="valBarChartOptions"
-          />
-        </div>
-        <div class="card yield">
-          <PiePlotChart
-            class="chart"
-            :chart-data="yieldPieData"
-            :options="pieChartOptions"
-          />
-        </div>
-      </div>
-      <div class="whole second-row">
-        <div class="info">
-          <mdb-icon icon="info-circle" size="2x" />
-          <p class="text">Profitability</p>
-          <Dropdown
-            class="date dropdown"
-            :items="monthList"
-            :selected="profitSelectedMonth"
-            @fetchItemID="handleProfitMonth"
-          ></Dropdown>
-          <Dropdown
-            class="date dropdown"
-            :items="yearList"
-            :selected="profitSelectedYear"
-            @fetchItemID="handleProfitYear"
-          ></Dropdown>
-        </div>
-        <div class="card">
-          <LinePlotChart
-            :chart-data="profitLineData"
-            :options="valBarChartOptions"
-          />
+        <div class="whole second-row">
+          <div class="info">
+            <mdb-icon icon="info-circle" size="2x" />
+            <p class="text">Profitability</p>
+            <Dropdown
+              class="date dropdown"
+              :items="monthList"
+              :selected="profitSelectedMonth"
+              @fetchItemID="handleProfitMonth"
+            ></Dropdown>
+            <Dropdown
+              class="date dropdown"
+              :items="yearList"
+              :selected="profitSelectedYear"
+              @fetchItemID="handleProfitYear"
+            ></Dropdown>
+          </div>
+          <div class="card">
+            <LinePlotChart
+              :chart-data="profitLineData"
+              :options="valBarChartOptions"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -125,7 +128,9 @@ import PiePlotChart from "@/services/charts/PiePlotChart.js";
 import LinePlotChart from "@/services/charts/LinePlotChart.js";
 import backend from "@/services/backend.js";
 import Dropdown from "@/components/Dropdown.vue";
-import { mapActions } from "vuex";
+// import { mapActions } from "vuex";
+import store from "@/store";
+import Header from "@/components/Header";
 
 export default {
   name: "Home",
@@ -138,10 +143,13 @@ export default {
     PiePlotChart,
     LinePlotChart,
     Dropdown,
+    Header,
   },
   data() {
     return {
       loading: true,
+      // Store all the cow ID
+      cows: Array,
       // These three variables store all the data
       fat: Object,
       protein: Object,
@@ -273,6 +281,7 @@ export default {
         // console.log("send", params);
         const resp = await backend.fetchResource(path, params);
         // console.log(resp);
+        this.cows = resp["cows"];
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
         this.yield = resp["milkyield_chart_data"];
@@ -289,13 +298,12 @@ export default {
     },
     // Check id
     check(id) {
-      var email = this.getEmail();
-      var params = { email: email, ID: id === "1000" ? "all" : id };
+      var email = store.getters.getUserEmail;
+      var params = { email: email };
+      // Number -100 means the whole herds
+      params["ID"] = id === "-100" ? "all" : id;
       return params;
     },
-    ...mapActions({
-      getEmail: "getEmail",
-    }),
     // Hanlde window
     handleUnload() {},
     // Fill bar charts data
