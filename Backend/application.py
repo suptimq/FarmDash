@@ -36,23 +36,57 @@ def index():
     return render_template('base.html')
 
 
+@application.route('/login', methods=['POST'])
+def login():
+    # Three cases when dealing with user authentication
+    # code-200: succes, code-100: password unmatched, code-300: user not fount
+    if request.method == 'POST':
+        post_data = request.get_json()
+        email = post_data.get('email')
+        password = post_data.get('password')
+        user = User.query.filter_by(email=email).first()
+        print(user)
+        if user:
+            print('here')
+            if user.password == password:
+                user_obj = {'username': user.username, 'email': user.email}
+                resp = {'user': user_obj, 'msg': 'success', 'code': 200}
+                return jsonify(resp)
+            else:
+                resp = {'msg': 'failure', 'code': 100}
+                return jsonify(resp)
+        else:
+            resp = {'msg': 'failure', 'code': 300}
+            return jsonify(resp)
+
+
 @application.route('/register', methods=['GET', 'POST'])
 def register():
+    # Three cases when dealing with user registration
+    # code-200: succes, code-100: user exists, code-300: database error
     if request.method == 'POST':
-        email = request.form['email']
-        username = request.form['username']
-        password = request.form['password']
-        data_entered = User(email, username, password)
+        post_data = request.get_json()
+        print(post_data)
+        email = post_data.get('email')
+        username = post_data.get('username')
+        password = post_data.get('password')
+
+        userExist = User.query.filter_by(email=email).all()
+        if userExist:
+            resp = {'msg': 'failure', 'code': 100}
+            return jsonify(resp)
+
+        userDB = User(email, username, password)
         try:
-            db.session.add(data_entered)
+            db.session.add(userDB)
             db.session.commit()
+            resp = {'msg': 'success', 'code': 200}
         except:
             db.session.rollback()
             print("rolled back")
+            resp = {'msg': 'failure', 'code': 300}
         db.session.close()
-        return render_template('thanks.html', notes="add user successful")
-
-    return render_template('base.html')
+        return jsonify(resp)
 
 
 @application.route('/cow', methods=['GET'])
