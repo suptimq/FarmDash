@@ -1,7 +1,9 @@
 from application import db
-from application.models import Data, Records
+from application.models import Data, Records, User
 import pandas as pd
 import copy
+
+from pdb import set_trace
 
 
 class DBOperation():
@@ -16,7 +18,16 @@ class DBOperation():
         records = Records.query.all()
         return records
 
-    def calc_Monthly(self, animal_ID):
+    def get_CowIDs(self, userID):
+        # Return all the cow ID for the current user
+        records = Records.query.filter_by(userID=userID).all()
+        IDs = set()
+        for r in records:
+            IDs.add(r.animal_ID)
+
+        return list(IDs)
+
+    def calc_Monthly(self, userID, animal_ID):
         print("Aggregating fat and protein data")
         fat = {}
         fat["2018"] = {}
@@ -28,7 +39,7 @@ class DBOperation():
         milkyield = copy.deepcopy(fat)
 
         if animal_ID == "all":
-            records = Records.query.all()
+            records = Records.query.filter_by(userID=userID).all()
             AVGFatRecords = {}
             AVGProteinRecords = {}
             AVGYieldRecords = {}
@@ -44,6 +55,8 @@ class DBOperation():
                     AVGYieldRecords[record.time].append(record.milk_yield)
             for time in AVGFatRecords:
                 ymd = time.split("-")
+                # Remove leading zeros
+                ymd = [y.strip("0") for y in ymd]
                 AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (
                     len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
                 AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (
@@ -55,11 +68,15 @@ class DBOperation():
                 milkyield[ymd[0]][ymd[1]].append(AVGYield)
 
         else:
-            records = Records.query.filter_by(animal_ID=animal_ID).all()
+            records = Records.query.filter_by(
+                userID=userID, animal_ID=animal_ID).all()
+
             if len(records) != 0:
                 for i in range(len(records)):
                     record = records[i]
                     ymd = record.time.split("-")
+                    # Remove leading zeros
+                    ymd = [y.strip("0") for y in ymd]
                     # first aggregate to one date "2018-3-1" then decomposite by month and date
 
                     fat[ymd[0]][ymd[1]].append(record.avg_fat)

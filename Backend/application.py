@@ -94,15 +94,22 @@ def get_data():
     # Bar chart data
     #   Dictionary: key-month, value-records within that month
     # print('Request cow id: {}'.format(cowID))
-    print(request)
+    # print(request)
     cowID = request.args.get('ID')
-    print(cowID)
-    fat, protein, milkyield = myOperation.calc_Monthly(cowID)
+    userEmail = request.args.get('email')
+    # print(cowID)
+    # print(userEmail)
+    user = User.query.filter_by(email=userEmail).first()
+    userID = user.id
+    # print(userID)
+    fat, protein, milkyield = myOperation.calc_Monthly(userID, cowID)
+    cows = myOperation.get_CowIDs(userID)
     response = {
         'status': 'sucess',
         'fat_chart_data': fat,
         'protein_chart_data': protein,
-        'milkyield_chart_data': milkyield
+        'milkyield_chart_data': milkyield,
+        'cows': cows
     }
     return jsonify(response)
 
