@@ -7,6 +7,7 @@
     </div>
     <div v-else id="content" class="content">
       <div class="stat first-row">
+        <!-- Fat -->
         <div class="info">
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Average Fat</p>
@@ -27,16 +28,10 @@
           <BarPlotChart
             class="chart"
             :chart-data="fatBarData"
-            :options="barChartOptions"
+            :options="avgBarChartOptions"
           />
         </div>
-        <div class="card">
-          <PiePlotChart
-            class="chart"
-            :chart-data="fatPieData"
-            :options="pieChartOptions"
-          />
-        </div>
+        <!-- Protein -->
         <div class="info">
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Average Protein</p>
@@ -57,13 +52,37 @@
           <BarPlotChart
             class="chart"
             :chart-data="proteinBarData"
-            :options="barChartOptions"
+            :options="avgBarChartOptions"
           />
         </div>
-        <div class="card">
+        <!-- Yield -->
+        <div class="info">
+          <mdb-icon icon="info-circle" size="2x" />
+          <p class="text">Yield</p>
+          <Dropdown
+            class="date dropdown"
+            :items="monthList"
+            :selected="yieldSelctedMonth"
+            @fetchItemID="handleYieldMonth"
+          ></Dropdown>
+          <Dropdown
+            class="date dropdown"
+            :items="yearList"
+            :selected="yieldSelectedYear"
+            @fetchItemID="handleYieldYear"
+          ></Dropdown>
+        </div>
+        <div class="card yield">
+          <BarPlotChart
+            class="chart"
+            :chart-data="yieldBarData"
+            :options="valBarChartOptions"
+          />
+        </div>
+        <div class="card yield">
           <PiePlotChart
             class="chart"
-            :chart-data="proteinPieData"
+            :chart-data="yieldPieData"
             :options="pieChartOptions"
           />
         </div>
@@ -72,9 +91,24 @@
         <div class="info">
           <mdb-icon icon="info-circle" size="2x" />
           <p class="text">Profitability</p>
+          <Dropdown
+            class="date dropdown"
+            :items="monthList"
+            :selected="profitSelectedMonth"
+            @fetchItemID="handleProfitMonth"
+          ></Dropdown>
+          <Dropdown
+            class="date dropdown"
+            :items="yearList"
+            :selected="profitSelectedYear"
+            @fetchItemID="handleProfitYear"
+          ></Dropdown>
         </div>
         <div class="card">
-          <LinePlotChart :chart-data="barData" :options="barOptions" />
+          <LinePlotChart
+            :chart-data="profitLineData"
+            :options="valBarChartOptions"
+          />
         </div>
       </div>
     </div>
@@ -85,7 +119,7 @@
 
 <script>
 import { mdbIcon } from "mdbvue";
-import charts from "@/services/charts.js";
+// import charts from "@/services/charts.js";
 import BarPlotChart from "@/services/charts/BarPlotChart.js";
 import PiePlotChart from "@/services/charts/PiePlotChart.js";
 import LinePlotChart from "@/services/charts/LinePlotChart.js";
@@ -107,25 +141,27 @@ export default {
   data() {
     return {
       loading: true,
-      // These two variables store all the data
+      // These three variables store all the data
       fat: Object,
       protein: Object,
-      //
+      yield: Object,
+      // These three variables sotre data in the current year
       fatData: Object,
       proteinData: Object,
-      barData: Object,
-      barOptions: Object,
-      pieData: Object,
-      pieOptions: Object,
-      lineData: Object,
-      lineOptions: Object,
-      fatSelectedMonth: 1,
+      yieldData: Object,
+      //
+      fatSelectedMonth: 9,
       fatSelectedYear: 2018,
-      proteinSelectedMonth: 1,
+      proteinSelectedMonth: 9,
       proteinSelectedYear: 2018,
+      yieldSelctedMonth: 5,
+      yieldSelectedYear: 2018,
+      // Calculate profitability
+      price: 0.002,
+      profitSelectedMonth: 4,
+      profitSelectedYear: 2018,
       // For plotting pie charts
-      thisYearTotalFat: Number,
-      thisYearTotalProtein: Number,
+      thisYearTotalYield: Number,
       monthList: [
         { id: 1, name: "Jan" },
         { id: 2, name: "Feb" },
@@ -144,19 +180,8 @@ export default {
         { id: 2018, name: "2018" },
         { id: 2019, name: "2019" },
       ],
-      barChartOptions: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
-        },
-      },
+      avgBarChartOptions: Object,
+      valBarChartOptions: Object,
       pieChartOptions: {
         hoverBorderWidth: 20,
         maintainAspectRatio: false,
@@ -164,11 +189,9 @@ export default {
     };
   },
   created() {
-    [this.barData, this.barOptions] = charts.fillBarData();
-    [this.pieData, this.pieOptions] = charts.fillPieData();
-    [this.lineData, this.lineOptions] = charts.fillBarData();
     // Data from backend
     this.getHerdsData(this.$route.params.id);
+    this.initOptions();
   },
   mounted() {},
   updated() {},
@@ -180,28 +203,45 @@ export default {
         this.fatSelectedMonth - 1
       ];
 
-      return this.fillBarData(key, val, this.fatSelectedYear);
+      return this.fillBarData(key, val, this.fatSelectedYear, "fat");
     },
     proteinBarData: function() {
       const [key, val] = Object.entries(this.proteinData)[
         this.proteinSelectedMonth - 1
       ];
 
-      return this.fillBarData(key, val, this.proteinSelectedYear);
+      return this.fillBarData(key, val, this.proteinSelectedYear, "protein");
     },
-    fatPieData: function() {
-      const [key, val] = Object.entries(this.fatData)[
-        this.fatSelectedMonth - 1
+    yieldBarData: function() {
+      const [key, val] = Object.entries(this.yieldData)[
+        this.yieldSelctedMonth - 1
       ];
 
-      return this.fillPieData(key, val, 1);
+      return this.fillBarData(key, val, this.yieldSelectedYear, "yield");
     },
-    proteinPieData: function() {
-      const [key, val] = Object.entries(this.proteinData)[
-        this.proteinSelectedMonth - 1
+    yieldPieData: function() {
+      const [key, val] = Object.entries(this.yieldData)[
+        this.yieldSelctedMonth - 1
       ];
 
-      return this.fillPieData(key, val, 2);
+      return this.fillPieData(key, val);
+    },
+    profitLineData: function() {
+      var month = this.profitSelectedMonth - 1;
+      var year = this.profitSelectedYear;
+      // Fat
+      var profitFatData = this.fat[year];
+      const [fatKey, fatVal] = Object.entries(profitFatData)[month];
+      // Protein
+      var profitProteinData = this.protein[year];
+      const [proteinKey, proteinVal] = Object.entries(profitProteinData)[month];
+      // Yield
+      var profitYieldData = this.yield[year];
+      const [yieldKey, yieldVal] = Object.entries(profitYieldData)[month];
+      var profitVal = this.calProfit(fatVal, proteinVal, yieldVal);
+      console.log(fatKey, proteinKey, yieldKey);
+
+      return this.fillBarData(fatKey, profitVal, year, "profit");
     },
   },
   watch: {
@@ -219,30 +259,39 @@ export default {
       this.proteinData = this.protein[year];
       this.thisYearTotalProtein = this.sumArrays(this.proteinData);
     },
+    yieldSelectedYear: function(year) {
+      this.yieldData = this.yield[year];
+      this.thisYearTotalYield = this.sumArrays(this.yieldData);
+    },
   },
   methods: {
     async getHerdsData(id) {
       var path = "/cow";
-      const params = { ID: id };
+      var params = this.check(id);
       try {
-        console.log("send", id);
+        // console.log("send", params);
         const resp = await backend.fetchResource(path, params);
-        console.log(resp);
+        // console.log(resp);
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
+        this.yield = resp["milkyield_chart_data"];
         this.fatData = this.fat[this.fatSelectedYear];
         this.proteinData = this.protein[this.proteinSelectedYear];
+        this.yieldData = this.yield[this.yieldSelectedYear];
         // Sum
-        this.thisYearTotalFat = this.sumArrays(this.fatData);
-        this.thisYearTotalProtein = this.sumArrays(this.proteinData);
+        this.thisYearTotalYield = this.sumArrays(this.yieldData);
         // Set loading status
         this.loading = false;
       } catch (error) {
         console.log(error);
       }
     },
+    // Check id
+    check(id) {
+      return id === "1000" ? { ID: "all" } : { ID: id };
+    },
     // Fill bar charts data
-    fillBarData(key, val, year) {
+    fillBarData(key, val, year, section) {
       var chartData = {};
       var datasets = [];
       var numOfDay = val.length;
@@ -250,7 +299,21 @@ export default {
 
       var tmpList = {};
       tmpList["label"] = key + "/" + year;
-      tmpList["backgroundColor"] = "#f87979";
+      var color;
+      switch (section) {
+        case "fat":
+          color = "rgba(0, 153, 255, 0.7)";
+          break;
+        case "protein":
+          color = "rgba(51, 51, 153, 0.7)";
+          break;
+        case "yield":
+          color = "rgba(51, 153, 51, 0.7)";
+          break;
+        default:
+          color = "rgba(255, 0, 0, 0.7)";
+      }
+      tmpList["backgroundColor"] = color;
       tmpList["data"] = val;
 
       datasets.push(tmpList);
@@ -260,24 +323,24 @@ export default {
       return chartData;
     },
     // Fill pie charts data
-    fillPieData(key, val, type) {
+    fillPieData(key, val) {
       var chartData = {};
       var datasets = [];
 
       var labels;
       var totalVal;
-      // Type-1: Fat, Type-2: Protein
-      if (type === 1) {
-        labels = ["Fat", "Total Fat"];
-        totalVal = this.thisYearTotalFat;
-      } else {
-        labels = ["Protein", "Total Protein"];
-        totalVal = this.thisYearTotalProtein;
-      }
+
+      const currMonthStr = "Month " + key + " Yield";
+      const totalStr = this.yieldSelectedYear + " Total Yield";
+      labels = [currMonthStr, totalStr];
+      totalVal = this.thisYearTotalYield;
 
       var tmpList = {};
       tmpList["label"] = key;
-      tmpList["backgroundColor"] = ["#41B883", "#E46651"];
+      tmpList["backgroundColor"] = [
+        "rgba(65, 184, 131, 0.8)",
+        "rgba(228, 103, 81, 0.8)",
+      ];
       tmpList["data"] = [this.sumArray(val), totalVal];
 
       datasets.push(tmpList);
@@ -306,6 +369,30 @@ export default {
     handleProteinYear(id) {
       this.proteinSelectedYear = id;
     },
+    handleYieldMonth(id) {
+      this.yieldSelctedMonth = id;
+    },
+    handleYieldYear(id) {
+      this.yieldSelectedYear = id;
+    },
+    handleProfitMonth(id) {
+      this.profitSelectedMonth = id;
+    },
+    handleProfitYear(id) {
+      this.profitSelectedYear = id;
+    },
+    // Yield * 453.6 * avg fat * price /pound
+    // Yield * 453.6 * avg protein * price /pound
+    // Fat: Array, Protein: Array, Yield: Array
+    calProfit(fat, protein, yieldd) {
+      var factor = 453.6;
+      var price = this.price;
+      var fp = fat.map((a, i) => a + protein[i]);
+      var fpy = fp.map((a, i) => a * yieldd[i]);
+      var singlePorfit = fpy.map((a) => a * price * factor);
+      // console.log(singlePorfit);
+      return singlePorfit;
+    },
     // Sum function
     // Items should be dictionary with {key-month, value-vals}
     sumArrays(items) {
@@ -319,6 +406,60 @@ export default {
     // Item should be an int array
     sumArray(item) {
       return item.reduce((a, b) => a + b, 0);
+    },
+    // Initial chart options
+    initOptions() {
+      this.avgBarChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Date",
+              },
+            },
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Percentage",
+              },
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+      };
+
+      this.valBarChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          xAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Date",
+              },
+            },
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: "Amount",
+              },
+              ticks: {
+                beginAtZero: true,
+              },
+            },
+          ],
+        },
+      };
     },
   },
 };
@@ -352,10 +493,15 @@ export default {
 
 .stat .card {
   height: 300px;
-  width: 48%;
+  width: 100%;
   background: white;
   border-radius: 12px;
   margin-bottom: 2em;
+}
+
+.card.yield {
+  width: 48%;
+  height: auto;
 }
 
 .whole .card {
