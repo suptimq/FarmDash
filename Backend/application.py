@@ -13,7 +13,7 @@ from DBOperation import DBOperation
 from flask_cors import CORS
 # Elastic Beanstalk initalization
 # application = Flask(__name__)
-application.debug = True
+application.debug = False
 # change this to your own value
 # application.secret_key = 'cC1YCIWOj9GgWspgNEo2'
 # enable CORS
