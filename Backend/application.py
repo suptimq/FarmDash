@@ -113,6 +113,14 @@ def get_data():
     }
     return jsonify(response)
 
-
+@application.route('/stream', methods=['POST'])
+def stream_data():
+    jsonArray = request.json
+    for json in jsonArray:
+        myOperation.stream(json)
+    response = {
+        'status': 'sucess',
+    }
+    return jsonify(response)
 if __name__ == '__main__':
     application.run(host='0.0.0.0')

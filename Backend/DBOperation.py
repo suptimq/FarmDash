@@ -5,7 +5,7 @@ import copy
 
 from pdb import set_trace
 
-
+## For outside querying items in the database
 class DBOperation():
     def __init__(self):
         self.records = []
@@ -20,12 +20,12 @@ class DBOperation():
 
     def get_CowIDs(self, userID):
         # Return all the cow ID for the current user
-        records = Records.query.filter_by(userID=userID).all()
-        IDs = set()
-        for r in records:
-            IDs.add(r.animal_ID)
-
-        return list(IDs)
+        temp = self.db.engine.execute("select distinct animal_ID from records where userID=%s",
+                                      self.userID).fetchall()
+        animal_IDs = []
+        for tuple in temp:
+            animal_IDs.append(tuple[0])
+        return animal_IDs
 
     def calc_Monthly(self, userID, animal_ID):
         print("Aggregating fat and protein data")
@@ -104,7 +104,7 @@ class DBOperation():
             animal_ID = int(file["Animal_ID"][i])
             group_ID = int(file["Group_ID"][i])
             status = file["AnimalStatus"][i]
-            milk_yield = float(file["Yield(gr)"][i])
+            milk_yield = int(file["Yield(gr)"][i])
             # deal with nan values
             if(milk_yield != milk_yield):
                 milk_yield = 0
@@ -122,10 +122,32 @@ class DBOperation():
 
             db.session.close()
 
+    def stream(self, json):
+        userID = int(json["userID"])
+        time = json["time"]
+        animal_ID = int(json["animal_ID"])
+        group_ID = int(json["group_ID"])
+        status = json["status"]
+        milk_yield = int(json["milk_yield"])
+        avg_fat = float(json["avg_fat"])
+        avg_protein = float(json["avg_protein"])
+        item = Records(userID, time, animal_ID, group_ID,
+                       status, milk_yield, avg_fat, avg_protein)
+        try:
+            db.session.add(item)
+            db.session.commit()
+            # print(item)
+        except Exception as e:
+            db.session.rollback()
+            print("Rolledback:", e)
+
+        db.session.close()
+
 
 if __name__ == "__main__":
 
     myOperation = DBOperation()
+    myOperation.get_CowIDs(1)
     # myOperation.create_Records()
     # fat, protein = myOperation.calc_Monthly(animal_ID = 2714)
     # print(fat)

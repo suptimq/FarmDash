@@ -75,13 +75,13 @@ class FakeHerdGenerator():
         return list(set(random.randint(0, 1000) for _ in range(self.num_group)))
 
     def random_milkYield(self):
-        return 0 if random.random() < 0.2 else random.randint(20000, 60000)
+        return random.randint(40000, 60000)
 
     def random_avgFat(self):
-        return 0 if random.random() < 0.5 else random.uniform(0, 4)
+        return random.uniform(2, 4)
 
     def random_avgProtein(self):
-        return 0 if random.random() < 0.5 else random.uniform(0, 4)
+        return random.uniform(2, 4)
 
 
 class FakeUserGenerator():
@@ -152,15 +152,15 @@ class FakeUserGenerator():
         return prefix + ''.join(random.choice(nums) for _ in range(length))
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    user_generator = FakeUserGenerator(write=True, num_user=3)
-    herd_generator = FakeHerdGenerator(
-        write=True, num_data=1, num_group=1, start='2018-03-01', end='2018-03-02')
+    # user_generator = FakeUserGenerator(write=True, num_user=3)
+    # herd_generator = FakeHerdGenerator(
+    #     write=True, num_data=1, num_group=1, start='2018-03-01', end='2018-03-02')
 
     # These two functions should not be ran at the same time since unfixed database session problem
     # user_generator.generate_Users()
-    herd_generator.generate_Records()
+    # herd_generator.generate_Records()
 
     # for u in User.query.all():
     #     print(u.id)
@@ -168,3 +168,7 @@ if __name__ == "__main__":
 
     # for r in Records.query.all():
     #     print(r)
+
+    # stream()
+
+
