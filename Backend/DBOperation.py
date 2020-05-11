@@ -20,8 +20,8 @@ class DBOperation():
 
     def get_CowIDs(self, userID):
         # Return all the cow ID for the current user
-        temp = self.db.engine.execute("select distinct animal_ID from records where userID=%s",
-                                      self.userID).fetchall()
+        temp = db.engine.execute("select distinct animal_ID from records where userID=%s",
+                                      userID).fetchall()
         animal_IDs = []
         for tuple in temp:
             animal_IDs.append(tuple[0])
@@ -30,11 +30,11 @@ class DBOperation():
     def calc_Monthly(self, userID, animal_ID):
         print("Aggregating fat and protein data")
         fat = {}
-        fat["2018"] = {}
-        fat["2019"] = {}
-        for i in range(1, 13):
-            fat["2018"][str(i)] = []
-            fat["2019"][str(i)] = []
+        # fat["2018"] = {}
+        # fat["2019"] = {}
+        # for i in range(1, 13):
+        #     fat["2018"][str(i)] = []
+        #     fat["2019"][str(i)] = []
         protein = copy.deepcopy(fat)
         milkyield = copy.deepcopy(fat)
 
@@ -63,6 +63,15 @@ class DBOperation():
                     len(AVGProteinRecords[time]) > 0) else sum(AVGProteinRecords[time])
                 AVGYield = sum(AVGYieldRecords[time]) / len(AVGYieldRecords[time]) if (
                     len(AVGYieldRecords[time]) > 0) else sum(AVGYieldRecords[time])
+                if ymd[0] not in fat:
+                    fat[ymd[0]] = {}
+                    protein[ymd[0]] = {}
+                    milkyield[ymd[0]] = {}
+                if ymd[1] not in fat[ymd[0]]:
+                    fat[ymd[0]][ymd[1]] = []
+                    protein[ymd[0]][ymd[1]] = []
+                    milkyield[ymd[0]][ymd[1]] = []
+
                 fat[ymd[0]][ymd[1]].append(AVGFat)
                 protein[ymd[0]][ymd[1]].append(AVGProtein)
                 milkyield[ymd[0]][ymd[1]].append(AVGYield)
@@ -78,6 +87,14 @@ class DBOperation():
                     # Remove leading zeros
                     ymd = [y.strip("0") for y in ymd]
                     # first aggregate to one date "2018-3-1" then decomposite by month and date
+                    if ymd[0] not in fat:
+                        fat[ymd[0]] = {}
+                        protein[ymd[0]] = {}
+                        milkyield[ymd[0]] = {}
+                    if ymd[1] not in fat[ymd[0]]:
+                        fat[ymd[0]][ymd[1]] = []
+                        protein[ymd[0]][ymd[1]] = []
+                        milkyield[ymd[0]][ymd[1]] = []
 
                     fat[ymd[0]][ymd[1]].append(record.avg_fat)
                     protein[ymd[0]][ymd[1]].append(record.avg_Protein)
