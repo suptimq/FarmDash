@@ -1,10 +1,10 @@
 <template>
-  <mdb-row>
+  <mdb-row class="frame">
     <mdb-col md="7">
       <img class="dairy-img" src="@/assets/dairyimg.png" />
     </mdb-col>
 
-    <mdb-col md="5">
+    <mdb-col>
       <section class="form-elegant">
         <mdb-row>
           <mdb-col md="12">
@@ -38,11 +38,11 @@
                 <div class="hint">
                   <!--Hint for unmatched passwords-->
                   <p
-                    v-if="password !== passwordConfirmed"
                     class="font-small red-text d-flex"
                   >
-                    Passwords don't match
+                    {{hinttext}}
                   </p>
+
                 </div>
 
                 <!-- Link for Signin -->
@@ -76,6 +76,14 @@
 import { mdbRow, mdbCol, mdbCard, mdbCardBody, mdbInput, mdbBtn } from "mdbvue";
 import backend from "@/services/backend.js";
 
+var hint0 = "Please fill in all the required fields!";
+var hint1 = "Incorrect email format!";
+var hint2 = "Passwords don't match!";
+var hint3 = "The length of password should be at least 6 bits!";
+var hint100 = "User has existed!";
+var hint200 = "Successful!";
+var hint300 = "The system is under maintenance! Please try again later.";
+
 export default {
   name: "SignUpNew",
   components: {
@@ -88,18 +96,38 @@ export default {
   },
   data() {
     return {
-      showModal: false,
-      userExist: false,
-      dbError: false,
+      //showModal: false,
+      //userExist: false,
+      //dbError: false,
       username: "",
       email: "",
       password: "",
       passwordConfirmed: "",
+      hinttext: "",
     };
   },
   methods: {
     async register() {
-      var user = this.encapsulate();
+      this.hinttext = "";
+      if (this.email === "" || this.username === "" || this.password ==="" || this.passwordConfirmed ===""){
+        this.hinttext = hint0;
+        return;
+      }
+      if (!this.checkEmail()) {
+        this.hinttext = hint1;
+        console.log("s");
+        return;
+      }
+      console.log("s");
+      if (!this.checkPassword()) {
+        this.hinttext = hint2;
+        return;
+      }
+      if (this.password.length<6) {
+        this.hinttext = hint3;
+        return;
+      }
+      let user = this.encapsulate();
       const data = await backend.register(user);
       if (data === undefined) {
         // Handle Exception
@@ -107,23 +135,32 @@ export default {
         const resp = data.data;
         console.log(resp);
         if (resp["code"] === 200) {
+          this.hinttext = hint200;
           this.$router.push({ path: `/signin` });
         } else {
           if (resp["code"] === 100) {
-            this.userExist = true;
+            //this.userExist = true;
+            this.hinttext = hint100;
           } else if (resp["code"] === 300) {
-            this.dbError = true;
+            //this.dbError = true;
+            this.hinttext = hint300;
           }
         }
       }
     },
+    checkPassword() {
+      return this.password === this.passwordConfirmed;
+    },
+    checkEmail() {
+      let reg = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
+      return reg.test(this.email);
+    },
     encapsulate() {
-      var user = {
+      return {
         username: this.username,
         email: this.email,
-        password: this.password,
+        password: this.password
       };
-      return user;
     },
     reset() {
       this.username = "";
@@ -136,9 +173,12 @@ export default {
 </script>
 
 <style scoped>
+
 .dairy-img {
-  height: 570px;
+  width: 110%;
+  height: calc(100vh);
 }
+
 .portrait {
   width: 120px;
   height: 120px;
@@ -157,7 +197,7 @@ export default {
 }
 
 .cardbody {
-  height: 570px;
+  height: calc(100vh);
 }
 
 .form-elegant .font-small {
