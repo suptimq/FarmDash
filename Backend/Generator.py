@@ -8,6 +8,7 @@ from application.models import Records, User
 # Assuming users are already stored in DB
 class FakeHerdGenerator():
     def __init__(self, write=False, num_data=100, num_group=5, start='2018-03-01', end='2019-01-28'):
+        # End day is not included
         self.num_data = num_data
         self.num_group = num_group
         self.start_date = datetime.datetime.strptime(start, "%Y-%m-%d")
@@ -44,13 +45,19 @@ class FakeHerdGenerator():
                     record = Records(userID, date, animal,
                                      groupID, status, milk_yield, avg_fat, avg_protein)
                     self.saved_records.append(record)
+                # print('user: {}\tdate: {}\tanimal: {}'.format(
+                #     userID, date, animal))
+                # print('-----------------------------------------------------------')
+
+        print("FINISHED GENERATING")
+        print("START COMMIT TO DB")
 
         # Insert all data at one time
         if self.write:
             try:
-                db.session.add_all(self.saved_records)
+                db.session.bulk_save_objects(self.saved_records)
                 db.session.commit()
-                print('Successfully => {}'.format(self.saved_records))
+                # print('Successfully => {}'.format(self.saved_records))
                 print('Total insert {} records'.format(len(self.saved_records)))
             except Exception as e:
                 db.session.rollback()
@@ -119,9 +126,9 @@ class FakeUserGenerator():
         # Insert all data at one time
         if self.write:
             try:
-                db.session.add_all(self.saved_user)
+                db.session.bulk_save_objects(self.saved_user)
                 db.session.commit()
-                print('Successfully => {}'.format(self.saved_user))
+                # print('Successfully => {}'.format(self.saved_user))
                 print('Total insert {} records'.format(len(self.saved_user)))
             except Exception as e:
                 db.session.rollback()
@@ -152,7 +159,7 @@ class FakeUserGenerator():
         return prefix + ''.join(random.choice(nums) for _ in range(length))
 
 
-# if __name__ == "__main__":
+if __name__ == "__main__":
 
     # user_generator = FakeUserGenerator(write=True, num_user=3)
     # herd_generator = FakeHerdGenerator(
@@ -170,5 +177,3 @@ class FakeUserGenerator():
     #     print(r)
 
     # stream()
-
-
