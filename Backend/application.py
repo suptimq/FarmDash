@@ -116,8 +116,7 @@ def get_data():
 @application.route('/stream', methods=['POST'])
 def stream_data():
     jsonArray = request.json
-    for json in jsonArray:
-        myOperation.stream(json)
+    myOperation.stream(jsonArray)
     response = {
         'status': 'sucess',
     }

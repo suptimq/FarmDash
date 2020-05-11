@@ -32,11 +32,6 @@ class DBOperation():
     def calc_Monthly(self, userID, animal_ID):
         print("Aggregating fat and protein data")
         fat = {}
-        # fat["2018"] = {}
-        # fat["2019"] = {}
-        # for i in range(1, 13):
-        #     fat["2018"][str(i)] = []
-        #     fat["2019"][str(i)] = []
         protein = copy.deepcopy(fat)
         milkyield = copy.deepcopy(fat)
 
@@ -58,7 +53,8 @@ class DBOperation():
             for time in AVGFatRecords:
                 ymd = time.split("-")
                 # Remove leading zeros
-                ymd = [y.strip("0") for y in ymd]
+                ymd[1] = str(int(ymd[1]))
+                # ymd = [y.strip("0") for y in ymd]
                 AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (
                     len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
                 AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (
@@ -69,10 +65,10 @@ class DBOperation():
                     fat[ymd[0]] = {}
                     protein[ymd[0]] = {}
                     milkyield[ymd[0]] = {}
-                if ymd[1] not in fat[ymd[0]]:
-                    fat[ymd[0]][ymd[1]] = []
-                    protein[ymd[0]][ymd[1]] = []
-                    milkyield[ymd[0]][ymd[1]] = []
+                    for i in range(1, 13):
+                        fat[ymd[0]][str(i)] = []
+                        protein[ymd[0]][str(i)] = []
+                        milkyield[ymd[0]][str(i)] = []
 
                 fat[ymd[0]][ymd[1]].append(AVGFat)
                 protein[ymd[0]][ymd[1]].append(AVGProtein)
@@ -86,17 +82,19 @@ class DBOperation():
                 for i in range(len(records)):
                     record = records[i]
                     ymd = record.time.split("-")
+
                     # Remove leading zeros
-                    ymd = [y.strip("0") for y in ymd]
+                    ymd[1] = str(int(ymd[1]))
+                    # ymd = [y.strip("0") for y in ymd]
                     # first aggregate to one date "2018-3-1" then decomposite by month and date
                     if ymd[0] not in fat:
                         fat[ymd[0]] = {}
                         protein[ymd[0]] = {}
                         milkyield[ymd[0]] = {}
-                    if ymd[1] not in fat[ymd[0]]:
-                        fat[ymd[0]][ymd[1]] = []
-                        protein[ymd[0]][ymd[1]] = []
-                        milkyield[ymd[0]][ymd[1]] = []
+                        for i in range(1, 13):
+                            fat[ymd[0]][str(i)] = []
+                            protein[ymd[0]][str(i)] = []
+                            milkyield[ymd[0]][str(i)] = []
 
                     fat[ymd[0]][ymd[1]].append(record.avg_fat)
                     protein[ymd[0]][ymd[1]].append(record.avg_Protein)
@@ -141,19 +139,22 @@ class DBOperation():
 
             db.session.close()
 
-    def stream(self, json):
-        userID = int(json["userID"])
-        time = json["time"]
-        animal_ID = int(json["animal_ID"])
-        group_ID = int(json["group_ID"])
-        status = json["status"]
-        milk_yield = int(json["milk_yield"])
-        avg_fat = float(json["avg_fat"])
-        avg_protein = float(json["avg_protein"])
-        item = Records(userID, time, animal_ID, group_ID,
-                       status, milk_yield, avg_fat, avg_protein)
+    def stream(self, jsonArray):
+        records = []
+        for json in jsonArray:
+            userID = int(json["userID"])
+            time = json["time"]
+            animal_ID = int(json["animal_ID"])
+            group_ID = int(json["group_ID"])
+            status = json["status"]
+            milk_yield = int(json["milk_yield"])
+            avg_fat = float(json["avg_fat"])
+            avg_protein = float(json["avg_protein"])
+            item = Records(userID, time, animal_ID, group_ID,
+                           status, milk_yield, avg_fat, avg_protein)
+            records.append(item)
         try:
-            db.session.add(item)
+            db.session.bulk_save_objects(records)
             db.session.commit()
             # print(item)
         except Exception as e:
@@ -173,6 +174,7 @@ class DBOperation():
 
         db.session.commit()
         return total_del
+
 
 
 if __name__ == "__main__":
