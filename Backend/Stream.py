@@ -79,7 +79,7 @@ userIDs = []
 for tuple in temp:
     userIDs.append(tuple[0])
 
-def send_requests(userID, num_of_records = 1):
+def send_requests(userID, num_of_records = 15):
     test = Stream(userID)
     for i in range(num_of_records):
         test.send()

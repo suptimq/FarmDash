@@ -139,19 +139,22 @@ class DBOperation():
 
             db.session.close()
 
-    def stream(self, json):
-        userID = int(json["userID"])
-        time = json["time"]
-        animal_ID = int(json["animal_ID"])
-        group_ID = int(json["group_ID"])
-        status = json["status"]
-        milk_yield = int(json["milk_yield"])
-        avg_fat = float(json["avg_fat"])
-        avg_protein = float(json["avg_protein"])
-        item = Records(userID, time, animal_ID, group_ID,
-                       status, milk_yield, avg_fat, avg_protein)
+    def stream(self, jsonArray):
+        records = []
+        for json in jsonArray:
+            userID = int(json["userID"])
+            time = json["time"]
+            animal_ID = int(json["animal_ID"])
+            group_ID = int(json["group_ID"])
+            status = json["status"]
+            milk_yield = int(json["milk_yield"])
+            avg_fat = float(json["avg_fat"])
+            avg_protein = float(json["avg_protein"])
+            item = Records(userID, time, animal_ID, group_ID,
+                           status, milk_yield, avg_fat, avg_protein)
+            records.append(item)
         try:
-            db.session.add(item)
+            db.session.bulk_save_objects(records)
             db.session.commit()
             # print(item)
         except Exception as e:
