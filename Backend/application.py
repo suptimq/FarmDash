@@ -102,16 +102,18 @@ def get_data():
     user = User.query.filter_by(email=userEmail).first()
     userID = user.id
     # print(userID)
-    fat, protein, milkyield = myOperation.calc_Monthly(userID, cowID)
+    fat, protein, milkyield, years = myOperation.calc_Monthly(userID, cowID)
     cows = myOperation.get_CowIDs(userID)
     response = {
         'status': 'sucess',
         'fat_chart_data': fat,
         'protein_chart_data': protein,
         'milkyield_chart_data': milkyield,
-        'cows': cows
+        'cows': cows,
+        'years': years
     }
     return jsonify(response)
+
 
 @application.route('/stream', methods=['POST'])
 def stream_data():
@@ -121,5 +123,7 @@ def stream_data():
         'status': 'sucess',
     }
     return jsonify(response)
+
+
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
