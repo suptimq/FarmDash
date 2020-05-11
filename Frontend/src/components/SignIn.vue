@@ -103,8 +103,8 @@ export default {
       showModal: false,
       passwordUnmatched: false,
       emailNotFound: false,
-      email: "123@gmail.com",
-      password: "123",
+      email: "w305475116@gmail.com",
+      password: "123123",
     };
   },
   methods: {

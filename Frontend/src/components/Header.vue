@@ -2,7 +2,10 @@
   <div>
     <header class="header">
       <div class="search pos">
-        <p class="text">Overview</p>
+        <!-- <p class="text">Overview</p> -->
+        <div class="alert alert-dark" role="alert">
+          The number of cows: {{ numOfCow }}
+        </div>
         <div class="input">
           <Dropdown
             :items="cows"
@@ -57,7 +60,7 @@ export default {
   created() {
     // Sort the ID
     this.cowsId = this.cowData
-      .slice(0, this.cowData.length - 1)
+      .slice(0, this.cowData.length)
       .sort((a, b) => parseInt(a) - parseInt(b));
     // Number -100 means the whole herds
     if (this.cowsId[this.cowsId.length - 1] !== -100) {
@@ -81,6 +84,9 @@ export default {
 
       return cows;
     },
+    numOfCow: function() {
+      return this.cowsId.length;
+    },
   },
   methods: {
     handleFetch(id) {
@@ -97,6 +103,10 @@ header {
   display: flex;
   justify-content: space-between;
   border-bottom: 1px solid #777;
+}
+
+.input {
+  margin-left: 10px;
 }
 
 .pos {

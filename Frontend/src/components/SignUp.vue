@@ -37,12 +37,9 @@
                 />
                 <div class="hint">
                   <!--Hint for unmatched passwords-->
-                  <p
-                    class="font-small red-text d-flex"
-                  >
-                    {{hinttext}}
+                  <p class="font-small red-text d-flex">
+                    {{ hinttext }}
                   </p>
-
                 </div>
 
                 <!-- Link for Signin -->
@@ -109,21 +106,26 @@ export default {
   methods: {
     async register() {
       this.hinttext = "";
-      if (this.email === "" || this.username === "" || this.password ==="" || this.passwordConfirmed ===""){
+      if (
+        this.email === "" ||
+        this.username === "" ||
+        this.password === "" ||
+        this.passwordConfirmed === ""
+      ) {
         this.hinttext = hint0;
         return;
       }
       if (!this.checkEmail()) {
         this.hinttext = hint1;
-        console.log("s");
+        // console.log("s");
         return;
       }
-      console.log("s");
+      // console.log("s");
       if (!this.checkPassword()) {
         this.hinttext = hint2;
         return;
       }
-      if (this.password.length<6) {
+      if (this.password.length < 6) {
         this.hinttext = hint3;
         return;
       }
@@ -159,7 +161,7 @@ export default {
       return {
         username: this.username,
         email: this.email,
-        password: this.password
+        password: this.password,
       };
     },
     reset() {
@@ -173,7 +175,6 @@ export default {
 </script>
 
 <style scoped>
-
 .dairy-img {
   width: 110%;
   height: calc(100vh);
