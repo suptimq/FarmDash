@@ -8,6 +8,7 @@ import Forget from "@/components/Forget.vue";
 import Reset from "@/components/Reset.vue";
 
 import Dash from "@/views/Dash.vue";
+import PageNotFound from "@/views/PageNotFound.vue";
 import store from "@/store";
 
 Vue.use(VueRouter);
@@ -38,6 +39,10 @@ const routes = [
     path: "/signup",
     name: "Signyp",
     component: SignUp,
+  },
+  {
+    path: "*",
+    component: PageNotFound,
   },
   {
     path: "/",

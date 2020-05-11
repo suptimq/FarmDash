@@ -3,7 +3,7 @@ import axios from "axios";
 let $axios = axios.create({
   // Defined in the .env file
   baseURL: process.env.VUE_APP_BASEURL,
-  timeout: 0,
+  timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -21,6 +21,7 @@ $axios.interceptors.response.use(
   function(error) {
     // Handle Error
     console.log(error);
+    alert("Request Timeout");
     return Promise.reject(error);
   }
 );

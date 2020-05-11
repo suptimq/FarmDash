@@ -111,23 +111,27 @@ export default {
     async authenticate() {
       const data = await backend.login(this.email, this.password);
       if (data === undefined) {
-        // Handle Exception
+        alert("Something goes went in the server...");
       } else {
-        const resp = data.data;
-        // console.log(resp);
-        if (resp["code"] === 200) {
-          var id = "all";
-          var userData = resp["user"];
-          localStorage.setItem("user", JSON.stringify(userData));
-          this.login(userData).then(() =>
-            this.$router.push({ path: `/home/${id}` })
-          );
-        } else {
-          if (resp["code"] === 100) {
-            this.passwordUnmatched = true;
-          } else if (resp["code"] === 300) {
-            this.emailNotFound = true;
+        try {
+          const resp = data.data;
+          console.log(resp);
+          if (resp["code"] === 200) {
+            var id = "all";
+            var userData = resp["user"];
+            localStorage.setItem("user", JSON.stringify(userData));
+            this.login(userData).then(() =>
+              this.$router.push({ path: `/home/${id}` })
+            );
+          } else {
+            if (resp["code"] === 100) {
+              this.passwordUnmatched = true;
+            } else if (resp["code"] === 300) {
+              this.emailNotFound = true;
+            }
           }
+        } catch {
+          console.log("error");
         }
       }
 
