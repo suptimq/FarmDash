@@ -35,6 +35,9 @@ class DBOperation():
         protein = copy.deepcopy(fat)
         milkyield = copy.deepcopy(fat)
 
+        # Store the appearing years
+        year = set()
+
         if animal_ID == "all":
             records = Records.query.filter_by(userID=userID).all()
             AVGFatRecords = {}
@@ -53,8 +56,7 @@ class DBOperation():
             for time in AVGFatRecords:
                 ymd = time.split("-")
                 # Remove leading zeros
-                ymd[1] = str(int(ymd[1]))
-                # ymd = [y.strip("0") for y in ymd]
+                ymd = [y.lstrip("0") for y in ymd]
                 AVGFat = sum(AVGFatRecords[time]) / len(AVGFatRecords[time]) if (
                     len(AVGFatRecords[time]) > 0) else sum(AVGFatRecords[time])
                 AVGProtein = sum(AVGProteinRecords[time]) / len(AVGProteinRecords[time]) if (
@@ -65,6 +67,8 @@ class DBOperation():
                     fat[ymd[0]] = {}
                     protein[ymd[0]] = {}
                     milkyield[ymd[0]] = {}
+                    # Add the year
+                    year.add(ymd[0])
                     for i in range(1, 13):
                         fat[ymd[0]][str(i)] = []
                         protein[ymd[0]][str(i)] = []
@@ -84,13 +88,14 @@ class DBOperation():
                     ymd = record.time.split("-")
 
                     # Remove leading zeros
-                    ymd[1] = str(int(ymd[1]))
-                    # ymd = [y.strip("0") for y in ymd]
+                    ymd = [y.lstrip("0") for y in ymd]
                     # first aggregate to one date "2018-3-1" then decomposite by month and date
                     if ymd[0] not in fat:
                         fat[ymd[0]] = {}
                         protein[ymd[0]] = {}
                         milkyield[ymd[0]] = {}
+                        # Add the year
+                        year.add(ymd[0])
                         for i in range(1, 13):
                             fat[ymd[0]][str(i)] = []
                             protein[ymd[0]][str(i)] = []
@@ -99,7 +104,7 @@ class DBOperation():
                     fat[ymd[0]][ymd[1]].append(record.avg_fat)
                     protein[ymd[0]][ymd[1]].append(record.avg_Protein)
                     milkyield[ymd[0]][ymd[1]].append(record.milk_yield)
-        return fat, protein, milkyield
+        return fat, protein, milkyield, list(year)
 
     def create_DBs(self):
         db.create_all()
@@ -174,7 +179,6 @@ class DBOperation():
 
         db.session.commit()
         return total_del
-
 
 
 if __name__ == "__main__":

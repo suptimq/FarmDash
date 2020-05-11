@@ -64,7 +64,7 @@
             <Dropdown
               class="date dropdown"
               :items="monthList"
-              :selected="yieldSelctedMonth"
+              :selected="yieldSelectedMonth"
               @fetchItemID="handleYieldMonth"
             ></Dropdown>
             <Dropdown
@@ -78,7 +78,7 @@
             <BarPlotChart
               class="chart"
               :chart-data="yieldBarData"
-              :options="valBarChartOptions"
+              :options="yieldBarOptions"
             />
           </div>
           <div class="card yield">
@@ -109,7 +109,7 @@
           <div class="card">
             <LinePlotChart
               :chart-data="profitLineData"
-              :options="valBarChartOptions"
+              :options="profitBarOptions"
             />
           </div>
         </div>
@@ -158,17 +158,18 @@ export default {
       fatData: Object,
       proteinData: Object,
       yieldData: Object,
-      //
-      fatSelectedMonth: 9,
-      fatSelectedYear: 2018,
-      proteinSelectedMonth: 9,
-      proteinSelectedYear: 2018,
-      yieldSelctedMonth: 5,
-      yieldSelectedYear: 2018,
+      // Bind with dropdown options
+      fatSelectedMonth: Number,
+      proteinSelectedMonth: Number,
+      yieldSelectedMonth: Number,
+      profitSelectedMonth: Number,
+      fatSelectedYear: String,
+      proteinSelectedYear: String,
+      yieldSelectedYear: String,
       // Calculate profitability
       price: 0.002,
-      profitSelectedMonth: 4,
-      profitSelectedYear: 2018,
+      profitSelectedYear: String,
+      years: Array,
       // For plotting pie charts
       thisYearTotalYield: Number,
       monthList: [
@@ -185,12 +186,9 @@ export default {
         { id: 11, name: "Nov" },
         { id: 12, name: "Dec" },
       ],
-      yearList: [
-        { id: 2018, name: "2018" },
-        { id: 2019, name: "2019" },
-      ],
       avgBarChartOptions: Object,
-      valBarChartOptions: Object,
+      yieldBarOptions: Object,
+      profitBarOptions: Object,
       pieChartOptions: {
         hoverBorderWidth: 20,
         maintainAspectRatio: false,
@@ -201,13 +199,12 @@ export default {
     // Data from backend
     this.getHerdsData(this.$route.params.id);
     this.initOptions();
+    this.initMonth(1);
   },
   mounted() {},
   updated() {},
   computed: {
     fatBarData: function() {
-      console.log("computed");
-      // console.log(this.fatData);
       const [key, val] = Object.entries(this.fatData)[
         this.fatSelectedMonth - 1
       ];
@@ -223,14 +220,14 @@ export default {
     },
     yieldBarData: function() {
       const [key, val] = Object.entries(this.yieldData)[
-        this.yieldSelctedMonth - 1
+        this.yieldSelectedMonth - 1
       ];
 
       return this.fillBarData(key, val, this.yieldSelectedYear, "yield");
     },
     yieldPieData: function() {
       const [key, val] = Object.entries(this.yieldData)[
-        this.yieldSelctedMonth - 1
+        this.yieldSelectedMonth - 1
       ];
 
       return this.fillPieData(key, val);
@@ -251,6 +248,18 @@ export default {
       console.log(fatKey, proteinKey, yieldKey);
 
       return this.fillBarData(fatKey, profitVal, year, "profit");
+    },
+    // Year list for dropdown options
+    yearList: function() {
+      var yearList = [];
+      for (const id of this.years) {
+        var tmp = {};
+        tmp["id"] = id;
+        tmp["name"] = id;
+        yearList.push(tmp);
+      }
+
+      return yearList;
     },
   },
   watch: {
@@ -281,10 +290,14 @@ export default {
         // console.log("send", params);
         const resp = await backend.fetchResource(path, params);
         // console.log(resp);
+        this.years = resp["years"];
         this.cows = resp["cows"];
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
         this.yield = resp["milkyield_chart_data"];
+        // Initialize selected year
+        this.initYear(this.years[0]);
+        // Initialize the current year data
         this.fatData = this.fat[this.fatSelectedYear];
         this.proteinData = this.protein[this.proteinSelectedYear];
         this.yieldData = this.yield[this.yieldSelectedYear];
@@ -365,6 +378,46 @@ export default {
 
       return chartData;
     },
+    // Yield * 453.6 * avg fat * price /pound
+    // Yield * 453.6 * avg protein * price /pound
+    // Fat: Array, Protein: Array, Yield: Array
+    calProfit(fat, protein, yieldd) {
+      var factor = 453.6;
+      var price = this.price;
+      var fp = fat.map((a, i) => a + protein[i]);
+      var fpy = fp.map((a, i) => a * yieldd[i]);
+      var singlePorfit = fpy.map((a) => a * price * factor);
+      // console.log(singlePorfit);
+      return singlePorfit;
+    },
+    // Initialize year
+    initYear(year) {
+      this.fatSelectedYear = year;
+      this.proteinSelectedYear = year;
+      this.yieldSelectedYear = year;
+      this.profitSelectedYear = year;
+    },
+    // Initialize month to January
+    initMonth(month) {
+      this.fatSelectedMonth = month;
+      this.proteinSelectedMonth = month;
+      this.yieldSelectedMonth = month;
+      this.profitSelectedMonth = month;
+    },
+    // Sum function
+    // Items should be dictionary with {key-month, value-vals}
+    sumArrays(items) {
+      var vals = Object.values(items);
+      var tmpSum = 0;
+      for (const val of vals) {
+        tmpSum += this.sumArray(val);
+      }
+      return tmpSum;
+    },
+    // Item should be an int array
+    sumArray(item) {
+      return item.reduce((a, b) => a + b, 0);
+    },
     // Likewise Python range() function
     range(low, high) {
       var list = [];
@@ -386,7 +439,7 @@ export default {
       this.proteinSelectedYear = id;
     },
     handleYieldMonth(id) {
-      this.yieldSelctedMonth = id;
+      this.yieldSelectedMonth = id;
     },
     handleYieldYear(id) {
       this.yieldSelectedYear = id;
@@ -396,32 +449,6 @@ export default {
     },
     handleProfitYear(id) {
       this.profitSelectedYear = id;
-    },
-    // Yield * 453.6 * avg fat * price /pound
-    // Yield * 453.6 * avg protein * price /pound
-    // Fat: Array, Protein: Array, Yield: Array
-    calProfit(fat, protein, yieldd) {
-      var factor = 453.6;
-      var price = this.price;
-      var fp = fat.map((a, i) => a + protein[i]);
-      var fpy = fp.map((a, i) => a * yieldd[i]);
-      var singlePorfit = fpy.map((a) => a * price * factor);
-      // console.log(singlePorfit);
-      return singlePorfit;
-    },
-    // Sum function
-    // Items should be dictionary with {key-month, value-vals}
-    sumArrays(items) {
-      var vals = Object.values(items);
-      var tmpSum = 0;
-      for (const val of vals) {
-        tmpSum += this.sumArray(val);
-      }
-      return tmpSum;
-    },
-    // Item should be an int array
-    sumArray(item) {
-      return item.reduce((a, b) => a + b, 0);
     },
     // Initial chart options
     initOptions() {
@@ -451,7 +478,7 @@ export default {
         },
       };
 
-      this.valBarChartOptions = {
+      var valBarChartOptions = {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
@@ -463,19 +490,33 @@ export default {
               },
             },
           ],
-          yAxes: [
-            {
-              scaleLabel: {
-                display: true,
-                labelString: "Amount",
-              },
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
         },
       };
+      // Deep copy
+      this.yieldBarOptions = JSON.parse(JSON.stringify(valBarChartOptions));
+      this.yieldBarOptions["scales"]["yAxes"] = [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "Amount / lb",
+          },
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ];
+      this.profitBarOptions = JSON.parse(JSON.stringify(valBarChartOptions));
+      this.profitBarOptions["scales"]["yAxes"] = [
+        {
+          scaleLabel: {
+            display: true,
+            labelString: "Amount / dollar",
+          },
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ];
     },
   },
 };

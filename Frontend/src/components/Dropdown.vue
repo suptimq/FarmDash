@@ -42,7 +42,7 @@ export default {
       required: true,
     },
     selected: {
-      type: Number,
+      type: [String, Number],
       required: true,
     },
     scroll: {
