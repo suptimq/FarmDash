@@ -5,7 +5,9 @@ import copy
 
 from pdb import set_trace
 
-## For outside querying items in the database
+# For outside querying items in the database
+
+
 class DBOperation():
     def __init__(self):
         self.records = []
@@ -21,7 +23,7 @@ class DBOperation():
     def get_CowIDs(self, userID):
         # Return all the cow ID for the current user
         temp = db.engine.execute("select distinct animal_ID from records where userID=%s",
-                                      userID).fetchall()
+                                 userID).fetchall()
         animal_IDs = []
         for tuple in temp:
             animal_IDs.append(tuple[0])
@@ -158,11 +160,32 @@ class DBOperation():
 
         db.session.close()
 
+    def delete_DBs(self, userIDs):
+        # Delete all records containing the specified userID
+        # Return the number of deleted items
+        total_del = 0
+        for userID in userIDs:
+            total_del += Records.query.filter_by(userID=userID).delete()
 
-# if __name__ == "__main__":
-#
-#     myOperation = DBOperation()
-#     myOperation.get_CowIDs(1)
+        print('Successfully delete {} records'.format(total_del))
+
+        db.session.commit()
+        return total_del
+
+
+
+if __name__ == "__main__":
+
+    myOperation = DBOperation()
+
+    # userIDs = []
+    # for u in User.query.all():
+    #     if u.id != 1:
+    #         userIDs.append(u.id)
+    # print(userIDs)
+    # myOperation.delete_DBs(userIDs)
+
+    # myOperation.get_CowIDs(1)
     # myOperation.create_Records()
     # fat, protein = myOperation.calc_Monthly(animal_ID = 2714)
     # print(fat)

@@ -81,7 +81,8 @@ export default {
 
 <style scoped>
 .dairy-img {
-  height: 570px;
+  width: 110%;
+  height: calc(100vh);
 }
 
 .portrait {
@@ -91,7 +92,7 @@ export default {
 }
 
 .cardbody {
-  height: 570px;
+  height: calc(100vh);
 }
 
 .reset-btn {
