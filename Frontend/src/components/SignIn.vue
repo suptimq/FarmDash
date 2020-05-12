@@ -14,7 +14,7 @@
                   <h2 class="dark-grey-text mb-5"><strong>Sign in</strong></h2>
                 </div>
                 <img
-                  class="portrait"
+                  class="avatar"
                   src="@/assets/cattle.png"
                   alt="Portrait"
                 />
@@ -154,7 +154,7 @@ export default {
   height: calc(100vh);
 }
 
-.portrait {
+.avatar {
   width: 120px;
   height: 120px;
   margin-top: -20px;

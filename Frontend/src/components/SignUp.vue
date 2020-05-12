@@ -13,7 +13,7 @@
                 <div class="text-center">
                   <h2 class="dark-grey-text mb-5"><strong>Sign up</strong></h2>
                 </div>
-                <img class="portrait" src="@/assets/cattle.png" />
+                <img class="avatar" src="@/assets/cattle.png" />
                 <mdb-input label="Username" v-model="username" required />
                 <mdb-input
                   label="Email"
@@ -180,7 +180,7 @@ export default {
   height: calc(100vh);
 }
 
-.portrait {
+.avatar {
   width: 120px;
   height: 120px;
   margin-top: -20px;

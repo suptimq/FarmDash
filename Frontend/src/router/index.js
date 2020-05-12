@@ -6,6 +6,7 @@ import SignIn from "@/components/SignIn.vue";
 import SignUp from "@/components/SignUp.vue";
 import Forget from "@/components/Forget.vue";
 import Reset from "@/components/Reset.vue";
+import Profile from "@/components/Profile.vue";
 
 import Dash from "@/views/Dash.vue";
 import PageNotFound from "@/views/PageNotFound.vue";
@@ -24,6 +25,11 @@ const routes = [
     path: "/signin",
     name: "Signin",
     component: SignIn,
+  },
+  {
+    path: "/test",
+    name: "Test",
+    component: Profile,
   },
   {
     path: "/forgetpassword",
