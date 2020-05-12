@@ -2,8 +2,8 @@ import axios from "axios";
 
 let $axios = axios.create({
   // Defined in the .env file
-  baseURL: process.env.VUE_APP_BASEURL,
-  timeout: 10000,
+  baseURL: process.env.VUE_APP_AWSURL,
+  timeout: 0,
   headers: { "Content-Type": "application/json" },
 });
 
