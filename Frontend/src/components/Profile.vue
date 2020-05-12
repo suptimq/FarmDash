@@ -7,8 +7,14 @@
         alt="User avatar"
       />
     </mdb-row>
-    <mdb-row><h5 class="font-weight-bold mb-4 text-profile">Ken</h5></mdb-row>
-    <mdb-row><p class="text-profile text-muted">Email</p></mdb-row>
+    <mdb-row
+      ><h5 class="font-weight-bold mb-4 text-username">
+        {{ username }}
+      </h5></mdb-row
+    >
+    <mdb-row
+      ><p class="text-email">{{ email }}</p></mdb-row
+    >
   </mdb-col>
 </template>
 
@@ -18,19 +24,39 @@ export default {
   name: "Profile",
   components: {
     mdbRow,
-    mdbCol
-  }
+    mdbCol,
+  },
+  props: {
+    username: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+  },
 };
 </script>
 
 <style scoped>
 .img-avatar {
   margin: auto;
-  max-width: 100px;
-  max-height: 100px;
+  margin-top: 30px;
+  max-width: 120px;
+  max-height: 120px;
 }
-.text-profile {
+.text-username {
   margin: auto;
-  text-align: center;
+  margin-top: 15px;
+  margin-bottom: -20px;
+  text-align: left;
+}
+.text-email {
+  margin: auto;
+  margin-top: -20px;
+  text-align: left;
+  opacity: 0.7;
+  font-size: 0.9rem;
 }
 </style>

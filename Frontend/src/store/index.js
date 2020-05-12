@@ -37,6 +37,9 @@ export default new Vuex.Store({
     getUserEmail(state) {
       return state.user.email;
     },
+    getUserName(state) {
+      return state.user.username;
+    },
   },
   actions: {
     login(context, userData) {

@@ -122,13 +122,11 @@
 
 <script>
 import { mdbIcon } from "mdbvue";
-// import charts from "@/services/charts.js";
 import BarPlotChart from "@/services/charts/BarPlotChart.js";
 import PiePlotChart from "@/services/charts/PiePlotChart.js";
 import LinePlotChart from "@/services/charts/LinePlotChart.js";
 import backend from "@/services/backend.js";
 import Dropdown from "@/components/Dropdown.vue";
-// import { mapActions } from "vuex";
 import store from "@/store";
 import Header from "@/components/Header";
 
