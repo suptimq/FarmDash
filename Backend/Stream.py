@@ -37,14 +37,16 @@ class Stream():
         time = []
         for tuple in temp:
             time.append(tuple[0])
-        time.sort()
+        # time.sort() # sort on alphabet level, not numerical
         if len(time) == 0:
             time.append('2018-01-01')
         return time[-1]
 
     def get_new_Time(self):
         self.time += datetime.timedelta(days=1)
-        return str(self.time.date())
+        time = str(self.time.date()).split('-')
+        time = [d.lstrip("0") for d in time]
+        return (time[0] + '-' + time[1] + '-' + time[2])
 
 
     def send(self):
@@ -72,14 +74,15 @@ class Stream():
         # print("The pastebin URL is:%s" % pastebin_url)
 
 # clear up fake generate stream data
-db.engine.execute("SET SQL_SAFE_UPDATES = 0")
-db.engine.execute("Delete from records where group_ID = 999")
+# db.engine.execute("SET SQL_SAFE_UPDATES = 0")
+# db.engine.execute("Delete from records where group_ID = 999")
+
 # get all userIDs
 temp = db.engine.execute("select id from user").fetchall()
+# userIDs=[1]
 userIDs = []
 for tuple in temp:
     userIDs.append(tuple[0])
-
 def send_requests(userID, num_of_records = 15):
     test = Stream(userID)
     for i in range(num_of_records):
