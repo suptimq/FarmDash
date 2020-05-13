@@ -145,8 +145,6 @@ export default {
   },
   data() {
     return {
-      // First time loading (usage: initYear function)
-      first: true,
       loading: true,
       // Store all the cow ID
       cows: Array,
@@ -266,8 +264,6 @@ export default {
     // React to params changes will not call the lifecycle hooks
     $route(to) {
       this.getHerdsData(to.params.id);
-      // this.initMonth(1);
-      // this.initYear(this.years[0]);
     },
     // Watch fatSelectedYear and proteinSelectedYear
     fatSelectedYear: function(year) {
@@ -298,10 +294,7 @@ export default {
         this.protein = resp["protein_chart_data"];
         this.yield = resp["milkyield_chart_data"];
         // Initialize selected year
-        if (this.first === true) {
-          this.initYear(this.years[0]);
-          this.first = false;
-        }
+        this.initYear(this.years[0]);
         // Initialize the current year data
         this.fatData = this.fat[this.fatSelectedYear];
         this.proteinData = this.protein[this.proteinSelectedYear];
