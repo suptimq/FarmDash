@@ -23,7 +23,17 @@ myOperation = DBOperation()
 @application.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        return render_template('base.html')
+        notes = "dead note"
+        data_entered = Data(notes=notes)
+        try:
+            db.session.add(data_entered)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        db.session.close()
+        return render_template('thanks.html', notes=notes)
+
+    return render_template('base.html')
 
 
 @application.route('/login', methods=['POST'])
