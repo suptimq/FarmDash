@@ -10,3 +10,12 @@ SQLALCHEMY_POOL_RECYCLE = 3600
 
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'dsaf0897sfdg45sfdgfdsaqzdf98sdf0a'
+
+SQLALCHEMY_DATABASE_REPLICA_URI = 'mysql+pymysql://' + USER + ':' + PASSWORD + \
+    '@mysql-dashboard-replica.cj7rotsa2rnv.us-east-2.rds.amazonaws.com:3306/flaskdemo'
+
+
+SQLALCHEMY_BINDS = {
+    'master': SQLALCHEMY_DATABASE_URI,
+    'slave': SQLALCHEMY_DATABASE_REPLICA_URI
+}
