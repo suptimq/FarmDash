@@ -6,3 +6,4 @@ application = Flask(__name__, template_folder='../templates')
 
 application.config.from_object('config')
 db = SQLAlchemy(application)
+print("db connection created:" + db.engine.url.host)

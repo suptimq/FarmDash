@@ -8,7 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 # defining the api-endpoint
 
-API_ENDPOINT = "http://flask-env-usingpython36.eba-zhya6xfu.us-east-1.elasticbeanstalk.com/stream"
+# API_ENDPOINT = "http://flask-env-usingpython36.eba-zhya6xfu.us-east-1.elasticbeanstalk.com/stream"
+API_ENDPOINT = "http://0.0.0.0:5000/stream"
 application = Flask(__name__)
 application.config.from_object('config')
 db = SQLAlchemy(application)

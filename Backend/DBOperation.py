@@ -1,16 +1,19 @@
-from application import db
+from application import db,application
 from application.models import Data, Records, User
 import pandas as pd
 import copy
-
+from flask_sqlalchemy import SQLAlchemy
 from pdb import set_trace
 
 # For outside querying items in the database
 
 
+
 class DBOperation():
     def __init__(self):
         self.records = []
+        self.db = db
+        self.application = application
         # self.fat, self.protein = self.calc_Monthly()
 
     def query_Monthly(self):
@@ -22,7 +25,7 @@ class DBOperation():
 
     def get_CowIDs(self, userID):
         # Return all the cow ID for the current user
-        temp = db.engine.execute("select distinct animal_ID from records where userID=%s",
+        temp = self.db.engine.execute("select distinct animal_ID from records where userID=%s",
                                  userID).fetchall()
         animal_IDs = []
         for tuple in temp:
@@ -107,7 +110,7 @@ class DBOperation():
         return fat, protein, milkyield, list(year)
 
     def create_DBs(self):
-        db.create_all()
+        self.db.create_all()
         print("DB created.")
 
     def create_Records(self):
@@ -135,16 +138,20 @@ class DBOperation():
             item = Records(userID, time, animal_ID, group_ID,
                            status, milk_yield, avg_fat, avg_protein)
             try:
-                db.session.add(item)
-                db.session.commit()
+                self.db.session.add(item)
+                self.db.session.commit()
                 # print(item)
             except Exception as e:
-                db.session.rollback()
+                self.db.session.rollback()
                 print("Rolledback:", e)
 
-            db.session.close()
+            self.db.session.close()
 
     def stream(self, jsonArray):
+        if self.db.engine.url.host != 'mysql-dashboard.cj7rotsa2rnv.us-east-2.rds.amazonaws.com':
+            self.application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://admin:mypassword@mysql-dashboard.cj7rotsa2rnv.us-east-2.rds.amazonaws.com:3306/flaskdemo'
+            self.db = SQLAlchemy(self.application)
+            print("switch db to master")
         records = []
         for json in jsonArray:
             userID = int(json["userID"])
@@ -159,14 +166,14 @@ class DBOperation():
                            status, milk_yield, avg_fat, avg_protein)
             records.append(item)
         try:
-            db.session.bulk_save_objects(records)
-            db.session.commit()
+            self.db.session.bulk_save_objects(records)
+            self.db.session.commit()
             # print(item)
         except Exception as e:
-            db.session.rollback()
+            self.db.session.rollback()
             print("Rolledback:", e)
 
-        db.session.close()
+        self.db.session.close()
 
     def delete_DBs(self, userIDs):
         # Delete all records containing the specified userID
@@ -177,7 +184,7 @@ class DBOperation():
 
         print('Successfully delete {} records'.format(total_del))
 
-        db.session.commit()
+        self.db.session.commit()
         return total_del
 
 
