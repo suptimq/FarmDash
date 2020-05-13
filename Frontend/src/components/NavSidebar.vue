@@ -47,8 +47,8 @@ export default {
   },
   data() {
     return {
-      username: "Sirui_Wang",
-      email: "w305475116@gmail.com",
+      username: "",
+      email: "",
       selected: "nav1",
       items: [
         {
