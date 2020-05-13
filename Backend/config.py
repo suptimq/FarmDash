@@ -8,12 +8,5 @@ SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + USER + ':' + PASSWORD + \
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_POOL_RECYCLE = 3600
 
-
-SQLALCHEMY_BINDS = {
-    'master': SQLALCHEMY_DATABASE_URI,
-    'slave': 'mysql+pymysql://' + USER + ':' + PASSWORD + '@mysql-dashboard-replica.cj7rotsa2rnv.us-east-2.rds.amazonaws.com:3306/flaskdemo'
-}
-
-
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'dsaf0897sfdg45sfdgfdsaqzdf98sdf0a'
