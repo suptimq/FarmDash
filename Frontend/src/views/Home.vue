@@ -145,6 +145,8 @@ export default {
   },
   data() {
     return {
+      // First time loading (usage: initYear function)
+      first: true,
       loading: true,
       // Store all the cow ID
       cows: Array,
@@ -288,13 +290,16 @@ export default {
         // console.log("send", params);
         const resp = await backend.fetchResource(path, params);
         // console.log(resp);
-        this.years = resp["years"];
+        this.years = resp["years"].sort((a, b) => parseInt(a) - parseInt(b));
         this.cows = resp["cows"];
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
         this.yield = resp["milkyield_chart_data"];
         // Initialize selected year
-        this.initYear(this.years[0]);
+        if (this.first === true) {
+          this.initYear(this.years[0]);
+          this.first = false;
+        }
         // Initialize the current year data
         this.fatData = this.fat[this.fatSelectedYear];
         this.proteinData = this.protein[this.proteinSelectedYear];
