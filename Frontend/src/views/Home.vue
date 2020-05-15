@@ -289,25 +289,29 @@ export default {
       try {
         // console.log("send", params);
         const resp = await backend.fetchResource(path, params);
-        // console.log(resp);
+        console.log(resp);
         this.years = resp["years"].sort((a, b) => parseInt(a) - parseInt(b));
         this.cows = resp["cows"];
         this.fat = resp["fat_chart_data"];
         this.protein = resp["protein_chart_data"];
         this.yield = resp["milkyield_chart_data"];
-        // Initialize selected year
-        if (this.first === true) {
-          this.initYear(this.years[0]);
-          this.first = false;
+        if (this.years.length === 0) {
+          alert("This User Has no Data Found!");
+        } else {
+          // Initialize selected year
+          if (this.first === true) {
+            this.initYear(this.years[0]);
+            this.first = false;
+          }
+          // Initialize the current year data
+          this.fatData = this.fat[this.fatSelectedYear];
+          this.proteinData = this.protein[this.proteinSelectedYear];
+          this.yieldData = this.yield[this.yieldSelectedYear];
+          // Sum
+          this.thisYearTotalYield = this.sumArrays(this.yieldData);
+          // Set loading status
+          this.loading = false;
         }
-        // Initialize the current year data
-        this.fatData = this.fat[this.fatSelectedYear];
-        this.proteinData = this.protein[this.proteinSelectedYear];
-        this.yieldData = this.yield[this.yieldSelectedYear];
-        // Sum
-        this.thisYearTotalYield = this.sumArrays(this.yieldData);
-        // Set loading status
-        this.loading = false;
       } catch (error) {
         console.log(error);
       }

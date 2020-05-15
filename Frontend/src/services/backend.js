@@ -3,7 +3,7 @@ import axios from "axios";
 let $axios = axios.create({
   // Defined in the .env file
   baseURL: process.env.VUE_APP_AWSURL,
-  timeout: 0,
+  timeout: 20000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -60,7 +60,7 @@ export default {
       data: JSON.stringify(user),
     };
 
-    console.log(requestOptions);
-    // return $axios(requestOptions);
+    // console.log(requestOptions);
+    return $axios(requestOptions);
   },
 };
