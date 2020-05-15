@@ -11,12 +11,15 @@ Develop an interface that displays information and graphs that summarize cow and
 - Front End:
   - [x] VueJS
   - [x] Yarn
+  - [x] **AWS S3**
 - Back End:
   - [x] Flask
   - [x] **AWS Elastic Beanstalk**
 - DataBase:
   - [x] MySQL
   - [x] **AWS RDS**
+- Testing
+  - [x] Apache Jmeter
 
 ## Milestones
 
@@ -24,3 +27,8 @@ Develop an interface that displays information and graphs that summarize cow and
 - Front-end User Interface Development
 - Back-end and Database Development
 - Performance Evaluation
+
+## Scalability
+
+- AWS EB provides auto-scaling instances
+- AWS RDS provides master-slave strucutre
