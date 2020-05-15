@@ -85,7 +85,7 @@ export default {
       return cows;
     },
     numOfCow: function() {
-      return this.cowsId.length;
+      return this.cowsId.length - 1;
     },
   },
   methods: {
