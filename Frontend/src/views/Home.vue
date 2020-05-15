@@ -265,6 +265,7 @@ export default {
   watch: {
     // React to params changes will not call the lifecycle hooks
     $route(to) {
+      this.loading = true;
       this.getHerdsData(to.params.id);
     },
     // Watch fatSelectedYear and proteinSelectedYear
