@@ -81,9 +81,9 @@ def register():
             db.session.add(userDB)
             db.session.commit()
             resp = {'msg': 'success', 'code': 200}
-        except:
+        except Exception as e:
             db.session.rollback()
-            print("rolled back")
+            print("rolled back:", e)
             resp = {'msg': 'failure', 'code': 300}
         db.session.close()
         return jsonify(resp)
