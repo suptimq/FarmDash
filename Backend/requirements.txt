@@ -31,7 +31,7 @@ jsonschema==3.2.0
 MarkupSafe==1.1.1
 numpy==1.18.4
 pandas==1.0.3
-paramiko==2.7.1
+paramiko==2.10.1
 pathspec==0.5.9
 pycparser==2.20
 PyMySQL==0.9.3
